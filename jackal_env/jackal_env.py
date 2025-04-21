@@ -1,5 +1,5 @@
-from mujoco import MjModel, MjViewer, MjData 
-from mujoco import viewer,MjRenderContextOffscreen
+from mujoco import MjModel, MjData 
+from mujoco import viewer
 import mujoco
 
 from scipy.spatial.transform import Rotation
@@ -48,10 +48,10 @@ class JackalEnv(gymnasium.Env):
         # state & action dimension
         self.action_dim = 2
         self.state_dim = len(self.robot_pose) + len(self.robot_vel)+len(self.accel)
-        self.action_space = spaces.Box(-np.ones(self.action_dim), np.ones(self.action_dim), dtype=np.float32)
+        self.action_space = spaces.Box(-np.ones(self.action_dim), np.ones(self.action_dim), dtype=np.float64)
         self.observation_space = spaces.Box(-np.inf*np.ones(self.state_dim), np.inf*np.ones(self.state_dim), dtype=np.float32)
 
-    def render(self, mode, **kwargs):
+    def render(self, **kwargs):
         if self.viewer is None:
             self.viewer = viewer.launch_passive(self.model, self.data)
         self.viewer.sync()
@@ -59,7 +59,7 @@ class JackalEnv(gymnasium.Env):
     def getSensor(self):
         sensor_dict = {'accelerometer':None, 'velocimeter':None, 'gyro':None}
         for sensor_name in sensor_dict.keys():
-            id = self.model.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SENSOR,sensor_name)
+            id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SENSOR,sensor_name)
             adr = self.model.sensor_adr[id]
             dim = self.model.sensor_dim[id]
             sensor_dict[sensor_name] = self.data.sensordata[adr:adr + dim].copy()
@@ -76,7 +76,7 @@ class JackalEnv(gymnasium.Env):
         self.accel[1] = sensor_dict['accelerometer'][1]
 
         self.robot_pose = self.data.xpos[self.body_id].copy()
-        robot_mat = self.data.xmat[self.body_id].copy()
+        robot_mat = self.data.xmat[self.body_id].copy().reshape(3, 3)
         theta = Rotation.from_matrix(robot_mat).as_euler('zyx', degrees=False)[0]
         self.robot_pose[2] = theta
 
@@ -93,20 +93,21 @@ class JackalEnv(gymnasium.Env):
         pos = state['pos']
         vel = state['vel']
         accel = state['accel']
-        state = np.concatenate([pos, vel,accel], axis=0)
+        state = np.concatenate([pos, vel,accel], axis=0,dtype=np.float32)
         return state
 
-    def reset(self):
+    def reset(self,seed=None, options=None):
         mujoco.mj_resetData(self.model, self.data)
+
         self.body_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, 'robot')
         self.action = np.zeros(2)
-        self.robot_vel = np.zeros(2)
+        self.robot_vel = np.zeros(3)
         self.robot_pose = np.zeros(3)
         self.accel = np.zeros(2)
-        state = self.get_state()
+        state = self.getFlattenState(self.getState())
         self.cur_step = 0
         self.path_length = 0.0
-        return self.getFlattenState(state)
+        return (state,{})
 
     def step(self, action):
         self.cur_step += 1        
@@ -125,11 +126,14 @@ class JackalEnv(gymnasium.Env):
         state = self.getState()
         goal_met = False
         done = False
+        is_terminated = False
         if np.linalg.norm(state['pos'] - self.goal_position) < 0.01:
             goal_met = True
         if self.cur_step >= self.max_steps:
             done = True
+            is_terminated = True
+
         reward = -self.path_length
         info = {"goal_met":goal_met, 'cost':self.path_length, 'state':state}
 
-        return self.getFlattenState(state), reward, done, info
+        return (self.getFlattenState(state), reward, done, is_terminated , info)
