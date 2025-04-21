@@ -1,6 +1,6 @@
-from mujoco_py import load_model_from_path, MjSim, MjViewer
-from mujoco_py import MjRenderContextOffscreen
-import mujoco_py
+from mujoco import MjModel, MjViewer, MjData 
+from mujoco import viewer,MjRenderContextOffscreen
+import mujoco
 
 from scipy.spatial.transform import Rotation
 from copy import deepcopy
@@ -19,11 +19,14 @@ def theta2vec(theta):
 class JackalEnv(gymnasium.Env):
     def __init__(self):
         abs_path = os.path.dirname(__file__)
-        self.model = load_model_from_path(f'{abs_path}/jackal.xml')
+
+        self.model = MjModel.from_xml_path(f'{abs_path}/jackal.xml')
+        self.data = MjData(self.model)
+
+        self.body_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, 'robot')
         self.time_step = 0.001
         self.n_substeps = 10
         self.time_step *= self.n_substeps
-        self.sim = MjSim(self.model, nsubsteps=self.n_substeps)
         self.viewer = None
 
         # for environment
@@ -50,20 +53,20 @@ class JackalEnv(gymnasium.Env):
 
     def render(self, mode, **kwargs):
         if self.viewer is None:
-            self.viewer = MjViewer(self.sim)
-        self.viewer.render()
+            self.viewer = viewer.launch_passive(self.model, self.data)
+        self.viewer.sync()
 
     def getSensor(self):
         sensor_dict = {'accelerometer':None, 'velocimeter':None, 'gyro':None}
         for sensor_name in sensor_dict.keys():
-            id = self.sim.model.sensor_name2id(sensor_name)
-            adr = self.sim.model.sensor_adr[id]
-            dim = self.sim.model.sensor_dim[id]
-            sensor_dict[sensor_name] = self.sim.data.sensordata[adr:adr + dim].copy()
+            id = self.model.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SENSOR,sensor_name)
+            adr = self.model.sensor_adr[id]
+            dim = self.model.sensor_dim[id]
+            sensor_dict[sensor_name] = self.data.sensordata[adr:adr + dim].copy()
         return sensor_dict
 
     def getState(self):
-        self.sim.forward()
+        mujoco.mj_forward(self.model, self.data)
         sensor_dict = self.getSensor()
         self.robot_vel[0] = sensor_dict['velocimeter'][0]
         self.robot_vel[1] = sensor_dict['velocimeter'][1]
@@ -72,8 +75,8 @@ class JackalEnv(gymnasium.Env):
         self.accel[0] = sensor_dict['accelerometer'][0]
         self.accel[1] = sensor_dict['accelerometer'][1]
 
-        self.robot_pose = self.sim.data.get_body_xpos('robot').copy()
-        robot_mat = self.sim.data.get_body_xmat('robot').copy()
+        self.robot_pose = self.data.xpos[self.body_id].copy()
+        robot_mat = self.data.xmat[self.body_id].copy()
         theta = Rotation.from_matrix(robot_mat).as_euler('zyx', degrees=False)[0]
         self.robot_pose[2] = theta
 
@@ -94,28 +97,30 @@ class JackalEnv(gymnasium.Env):
         return state
 
     def reset(self):
+        mujoco.mj_resetData(self.model, self.data)
+        self.body_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_BODY, 'robot')
         self.action = np.zeros(2)
         self.robot_vel = np.zeros(2)
         self.robot_pose = np.zeros(3)
         self.accel = np.zeros(2)
-        state = self.getState()
+        state = self.get_state()
         self.cur_step = 0
         self.path_length = 0.0
         return self.getFlattenState(state)
 
     def step(self, action):
         self.cur_step += 1        
-        prev_state = self.sim.data.get_body_xpos('robot')
+        prev_state = self.data.xpos[self.body_id]
         for j in range(self.num_time_step):
-            self.sim.forward()
+            mujoco.mj_forward(self.model, self.data)
             weight = 0.8
             self.action[0] = weight*self.action[0] + (1.0 - weight)*np.clip(action[0], -1.0, 1.0)
             self.action[1] = weight*self.action[1] + (1.0 - weight)*np.clip(action[1], -1.0, 1.0)
 
-            self.sim.data.ctrl[0] = self.action[0]
-            self.sim.data.ctrl[1] = self.action[1]
-            self.sim.step()
-            self.path_length += np.linalg.norm(self.sim.data.get_body_xpos('robot') - prev_state)
+            self.data.ctrl[0] = self.action[0]
+            self.data.ctrl[1] = self.action[1]
+            mujoco.mj_step(self.model,self.data)
+            self.path_length += np.linalg.norm(self.data.xpos[self.body_id] - prev_state)
 
         state = self.getState()
         goal_met = False
