@@ -63,15 +63,33 @@ class JackalEnv(gymnasium.Env):
     def render(self, **kwargs):
         if self.viewer is None:
             self.viewer = viewer.launch_passive(self.model, self.data)
-            if len(self.reference_waypoints) > 0:
-                for waypoint in self.reference_waypoints:
-                    self.viewer.add_marker(
-                        pos=waypoint[:3],  # x, y, z position
-                        size=[0.05, 0.05, 0.05],  # size of the marker
-                        rgba=[1, 0, 0, 1],  # red color
-                        type=mujoco.mjtGeom.mjGEOM_SPHERE
-                    )
+
+        # clear existing markers
         self.viewer.sync()
+
+        # draw the reference waypoints
+        # self.draw_waypoints(self.model, self.data, self.reference_waypoints, self.viewer)
+
+        # # sync viewer
+        # self.viewer.sync()
+
+    def draw_waypoints(self,model, data, waypoints, viewer_handle):
+        for wp in waypoints:
+            t, x, y, yaw = wp
+            pos = np.array([x, y, 0.1])  # slight Z offset so spheres are visible
+            size = np.array([0.05, 0.05, 0.05])  # sphere radius
+            rgba = np.array([1, 0, 0, 1])  # red color, fully opaque
+
+            mujoco.mjv_addMarker(
+                viewer_handle.scn,
+                model,
+                data,
+                pos,
+                None,  # no directional vector, for sphere
+                rgba,
+                size,
+                mjtGeom=mujoco.mjtGeom.mjGEOM_SPHERE,
+            )
 
     def getSensor(self):
         sensor_dict = {'accelerometer':None, 'velocimeter':None, 'gyro':None}

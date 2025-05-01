@@ -114,7 +114,7 @@ n_max_steps = 5000
 # Train with reward printing and trajectory update
 callback = EpisodeRewardCallback(env=env,verbose=1)
 for episode in range(n_episodes):
-    model.learn(total_timesteps=n_max_steps, callback=callback)
+    model.learn(total_timesteps=n_max_steps, callback=callback,progress_bar=True)
 
 # Save model
 model.save("td3_jackal_trajectory")
