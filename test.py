@@ -15,4 +15,5 @@ done = False
 while not done:
     action = env.action_space.sample()
     obs, reward, done,_, _ = env.step(action)
-    env.render()
+    print("State: [",obs[0],obs[1],obs[2],"]")
+    #env.render()

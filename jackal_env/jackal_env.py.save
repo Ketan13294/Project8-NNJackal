@@ -46,19 +46,14 @@ class JackalEnv(gymnasium.Env):
         # for action
         self.action = np.zeros(2)
 
-        # reference points list
-        self.reference_waypoints = []
+	# reference points list
+	self.reference_waypoints = []
 
         # state & action dimension
         self.action_dim = 2
         self.state_dim = len(self.robot_pose) + len(self.robot_vel)+len(self.accel)
         self.action_space = spaces.Box(-np.ones(self.action_dim), np.ones(self.action_dim), dtype=np.float64)
         self.observation_space = spaces.Box(-np.inf*np.ones(self.state_dim), np.inf*np.ones(self.state_dim), dtype=np.float32)
-
-    def setReferenceWaypoints(self,reference_waypoints):
-        self.reference_waypoints.clear()
-        for waypoint in reference_waypoints:
-            self.reference_waypoints.append(waypoint)
 
     def render(self, **kwargs):
         if self.viewer is None:
@@ -73,6 +68,13 @@ class JackalEnv(gymnasium.Env):
             dim = self.model.sensor_dim[id]
             sensor_dict[sensor_name] = self.data.sensordata[adr:adr + dim].copy()
         return sensor_dict
+
+    def setReferenceTrajectory(self,waypoints,num_of_waypts):
+	self.reference_waypoints.clear()
+        for i in range(num_of_waypts):
+	    self.reference_waypoints.append(waypoints[3*i+0])
+            self.reference_waypoints.append(waypoints[3*i+1])
+            self.reference_waypoints.append(waypoints[3*i+2])
 
     def getState(self):
         mujoco.mj_forward(self.model, self.data)
@@ -98,8 +100,7 @@ class JackalEnv(gymnasium.Env):
                 }
         return state
 
-    def getFlattenState(self):
-        state = self.getState()
+    def getFlattenState(self, state):
         pos = state['pos']
         vel = state['vel']
         accel = state['accel']
@@ -114,58 +115,32 @@ class JackalEnv(gymnasium.Env):
         self.robot_vel = np.zeros(3)
         self.robot_pose = np.zeros(3)
         self.accel = np.zeros(2)
-        state = self.getFlattenState()
+        state = self.getFlattenState(self.getState())
         self.cur_step = 0
         self.path_length = 0.0
+	self.reference_waypoints.clear()
         return (state,{})
 
-    def compute_lateral_drift(self,x,y,theta,path_points):
-        if len(path_points) == 0:
-            return 0.0,[0.0,0.0,0.0]
-        elif len(path_points) < 2:
-            nearest_pt = path_points[0]
-            drift = np.linalg.norm([x-nearest_pt[0],y-nearest_pt[1]])
-            return drift, nearest_pt
-
-        tree = KDTree([p[:2] for p in path_points])
-        dist, idx = tree.query([x, y])
+    def compute_lateral_drift(x,y,theta,path_points):
+        tree = KDTree(path_points)
+	dist, idx = tree.query([x, y])
         nearest_pt = path_points[idx]
 
-        yaw = nearest_pt[2]
-        path_dir = np.array([np.cos(yaw), np.sin(yaw)])
+        if idx < len(path_points) - 1:
+            next_pt = path_points[idx + 1]
+    	else:
+            next_pt = path_points[idx - 1]
 
-        robot_vec = np.array([x, y]) - np.array(nearest_pt[:2])
+    	path_vec = np.array(next_pt) - np.array(nearest_pt)
+    	path_dir = path_vec / (np.linalg.norm(path_vec) + 1e-6)
+	robot_vec = np.array([x, y]) - np.array(nearest_pt)
 
-        lateral_error = np.cross(np.append(path_dir,0), np.append(robot_vec,0))[2]
-        return lateral_error, nearest_pt
-
-    def get_reference_point(self, pos):
-        """
-            Get the closest reference trajectory point and its heading direction. 
-            Args:
-            pos (np.array): Current robot position [x, y, z]
-
-            Returns:
-            (x_ref, y_ref, theta_ref): Reference position and orientation (yaw)
-        """
-        x, y, yaw = pos[0], pos[1], pos[2]
-
-    	# Assume self.path_points is a list of [x, y] waypoints
-        if len(self.reference_waypoints) < 2:
-            return self.reference_waypoints[0][0], self.reference_waypoints[0][1], self.reference_waypoints[0][2]
-
-    	# Find closest point
-        distances = [np.linalg.norm(np.array([x, y, yaw]) - np.array(p)) for p in self.reference_waypoints]
-        idx = int(np.argmin(distances))
-        ref_point = self.reference_waypoints[idx]
-
-        return ref_point[0], ref_point[1], ref_point[2]
+    	lateral_error = np.cross(path_dir, robot_vec)
+    	return lateral_error, nearest_pt
 
     def step(self, action):
         self.cur_step += 1
         prev_state = self.data.xpos[self.body_id]
-        self.path_length = 0.0
-
         for j in range(self.num_time_step):
             mujoco.mj_forward(self.model, self.data)
             weight = 0.8
@@ -176,61 +151,18 @@ class JackalEnv(gymnasium.Env):
             self.data.ctrl[1] = self.action[1]
             mujoco.mj_step(self.model,self.data)
             self.path_length += np.linalg.norm(self.data.xpos[self.body_id] - prev_state)
-            prev_state = self.data.xpos[self.body_id].copy()
 
-	    # Get current state
         state = self.getState()
-        pos = state["pos"]
-        theta = pos[2]
-        v_left, v_right = self.action
+        goal_met = False
+        done = False
+        is_terminated = False
+        if np.linalg.norm(state['pos'] - self.goal_position) < 0.01:
+            goal_met = True
+        if self.cur_step >= self.max_steps:
+            done = True
+            is_terminated = True
 
-	    # Check termination
-        if len(self.reference_waypoints) > 0:
-            goal_met = np.linalg.norm(pos - self.reference_waypoints[-1]) < 0.01
-        else:
-            goal_met = np.linalg.norm(pos)<0.01
-        done = self.cur_step >= self.max_steps
-        is_terminated = done
+        reward = -self.path_length
+        info = {"goal_met":goal_met, 'cost':self.path_length, 'state':state}
 
-	    # === Compute reward components ===
-
-	    # Reference trajectory point (can be nearest or indexed)
-        if len(self.reference_waypoints) > 0:
-            x_ref, y_ref, theta_ref = self.get_reference_point(pos)  # should return closest waypoint or spline sample
-        else:
-            x_ref, y_ref, theta_ref = [0.0,0.0,0.0]
-
-    	# Positional and orientation errors
-        pos_error = np.linalg.norm(pos[:2] - np.array([x_ref, y_ref]))
-        angle_error = abs(theta - theta_ref)
-
-    	# Lateral drift
-        lateral_error, _ = self.compute_lateral_drift(pos[0], pos[1], theta, self.reference_waypoints)
-
-   	# Drift penalty beyond a max tolerance
-        max_drift = 0.3
-        drift_penalty = max(0.0, abs(lateral_error) - max_drift) ** 2
-
-    	# Control effort penalty
-        control_penalty = v_left**2 + v_right**2
-
-    	# === Total reward ===
-        reward = (
-        	- 5.0 * pos_error
-        	- 2.0 * angle_error
-        	- 0.5 * control_penalty
-        	- 5.0 * abs(lateral_error)
-        	- 10.0 * drift_penalty
-    	)
-
-        info = {
-                "goal_met": goal_met,
-                "cost": self.path_length,
-                "state": state,
-                "pos_error": pos_error,
-                "angle_error": angle_error,
-                "lateral_error": lateral_error,
-                "drift_penalty": drift_penalty
-            }
-
-        return self.getFlattenState(), reward, done, is_terminated, info
+        return (self.getFlattenState(state), reward, done, is_terminated , info)
