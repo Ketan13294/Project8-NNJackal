@@ -207,7 +207,7 @@ class JackalEnv(gymnasium.Env):
             goal_met = np.linalg.norm(pos - self.reference_waypoints[-1][1:4]) < 0.01
 
         done = goal_met and (self.cur_step >= self.max_steps)
-        is_terminated = done
+        is_terminated = self.sim_time > self.max_steps*self.time_step*self.num_time_step
 
 	    # === Compute reward components ===
 

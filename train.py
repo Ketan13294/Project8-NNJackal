@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 
 # ---- Environment Setup ---- #
 ENV_ID = "JackalEnv-v0"
-ENABLE_RENDER = True
+ENABLE_RENDER = False
 
 def generate_random_waypoints(duration=30.0, dt=3.0, max_speed=2.0, num_waypoints=10):
 
@@ -35,7 +35,7 @@ def generate_random_waypoints(duration=30.0, dt=3.0, max_speed=2.0, num_waypoint
 
 # ---- Callback to print reward ---- #
 class EpisodeRewardCallback(BaseCallback):
-    def __init__(self, env, verbose=1, plot_path="td3_jackal_reward_plot.png",save_freq=10):
+    def __init__(self, env, verbose=1, plot_path="td3_jackal_reward_plot.png",save_freq=1000):
         super().__init__(verbose)
         self.env = env
         self.verbose = verbose
@@ -109,9 +109,12 @@ model = TD3(
     device="cuda:0" if torch.cuda.is_available() else "cpu",
 )
 
+n_episodes = 40000
+n_max_steps = 5000
 # Train with reward printing and trajectory update
 callback = EpisodeRewardCallback(env=env,verbose=1)
-model.learn(total_timesteps=500_000_000, callback=callback)
+for episode in range(n_episodes):
+    model.learn(total_timesteps=n_max_steps, callback=callback)
 
 # Save model
 model.save("td3_jackal_trajectory")
