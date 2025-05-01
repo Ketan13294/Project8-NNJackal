@@ -253,7 +253,7 @@ class JackalEnv(gymnasium.Env):
 
     	# === Total reward ===
         reward = (
-            - 1.0 * time_error
+            - 0.01 * time_error
         	- 5.0 * pos_error
         	- 2.0 * angle_error
         	- 0.5 * control_penalty

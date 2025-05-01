@@ -16,7 +16,7 @@ def generate_random_waypoints(duration=30.0, dt=3.0, max_speed=2.0, num_waypoint
 
     t_points = np.linspace(0, duration, num_waypoints)
     x_points = np.cumsum(np.random.uniform(0.5, max_speed, size=num_waypoints))
-    y_points = np.cumsum(np.random.uniform(-0.2, 0.2, size=num_waypoints))  # Reduced range for smoother transitions
+    y_points = np.cumsum(np.random.uniform(-0.01, 0.01, size=num_waypoints))  # Reduced range for smoother transitions
     
     spline_x = CubicSpline(t_points, x_points, bc_type='natural')  # Natural boundary conditions for smoother curvature
     spline_y = CubicSpline(t_points, y_points, bc_type='natural')
@@ -35,7 +35,7 @@ def generate_random_waypoints(duration=30.0, dt=3.0, max_speed=2.0, num_waypoint
 
 # ---- Callback to print reward ---- #
 class EpisodeRewardCallback(BaseCallback):
-    def __init__(self, env, verbose=1, plot_path="td3_jackal_reward_plot.png",save_freq=1000):
+    def __init__(self, env, verbose=True, plot_path="td3_jackal_reward_plot",save_freq=50):
         super().__init__(verbose)
         self.env = env
         self.verbose = verbose
@@ -78,6 +78,7 @@ class EpisodeRewardCallback(BaseCallback):
             plt.tight_layout()
             plt.savefig(self.plot_path)
             plt.close()
+            print(f"Reward plot saved to {self.plot_path+"_{len(self.episode_rewards)}"}")
 
 env = gym.make(ENV_ID)
 
@@ -98,9 +99,8 @@ model = TD3(
     buffer_size=100_000,
     learning_rate=1e-3,
     batch_size=100,
-    train_freq=(1,"episode"),
+    train_freq=(200, "step"),
     tau=0.01,
-    gradient_steps=-1,
     gamma=0.99,
     policy_delay=10,
     target_policy_noise=0.2,
@@ -111,8 +111,8 @@ model = TD3(
 
 n_episodes = 40000
 n_max_steps = 5000
-# Train with reward printing and trajectory update
-callback = EpisodeRewardCallback(env=env,verbose=1)
+callback = EpisodeRewardCallback(env=env,verbose=True)
+
 for episode in range(n_episodes):
     model.learn(total_timesteps=n_max_steps, callback=callback,progress_bar=True)
 
