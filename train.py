@@ -1,25 +1,25 @@
 import gymnasium as gym
+import jackal_env
 import numpy as np
+import torch
 from stable_baselines3 import TD3
 from stable_baselines3.common.noise import NormalActionNoise
 from stable_baselines3.common.callbacks import BaseCallback
-import jackal_env
 from scipy.interpolate import CubicSpline
-from stable_baselines3.common.callbacks import BaseCallback
-from stable_baselines3.common.env_util import make_vec_env
+from matplotlib import pyplot as plt
 
 # ---- Environment Setup ---- #
 ENV_ID = "JackalEnv-v0"
-ENABLE_RENDER = False
+ENABLE_RENDER = True
 
-def generate_random_waypoints(duration=10.0, dt=0.1, max_speed=1.0, num_waypoints=10):
+def generate_random_waypoints(duration=30.0, dt=3.0, max_speed=2.0, num_waypoints=10):
 
     t_points = np.linspace(0, duration, num_waypoints)
     x_points = np.cumsum(np.random.uniform(0.5, max_speed, size=num_waypoints))
-    y_points = np.random.uniform(-2.0, 2.0, size=num_waypoints)
+    y_points = np.cumsum(np.random.uniform(-0.2, 0.2, size=num_waypoints))  # Reduced range for smoother transitions
     
-    spline_x = CubicSpline(t_points, x_points)
-    spline_y = CubicSpline(t_points, y_points)
+    spline_x = CubicSpline(t_points, x_points, bc_type='natural')  # Natural boundary conditions for smoother curvature
+    spline_y = CubicSpline(t_points, y_points, bc_type='natural')
 
     t_query = np.arange(0, duration, dt)
     x = spline_x(t_query)
@@ -29,21 +29,28 @@ def generate_random_waypoints(duration=10.0, dt=0.1, max_speed=1.0, num_waypoint
     dy = np.gradient(y)
     yaw = np.arctan2(dy, dx)
 
-    waypoints = list(zip(x, y, yaw))
+    waypoints = list(zip(t_query, x, y, yaw))
     return waypoints
 
 
 # ---- Callback to print reward ---- #
 class EpisodeRewardCallback(BaseCallback):
-    def __init__(self, env,plot_path="td3_jackal_reward_plot.png", verbose=1):
+    def __init__(self, env, verbose=1, plot_path="td3_jackal_reward_plot.png",save_freq=10):
         super().__init__(verbose)
         self.env = env
+        self.verbose = verbose
         self.plot_path = plot_path
         self.episode_rewards = []
         self.episode_reward = 0.0
+        self.save_freq = save_freq
 
     def _on_step(self) -> bool:
         self.episode_reward += self.locals["rewards"][0]
+
+        if len(self.episode_rewards) > 0 and len(self.episode_rewards) % self.save_freq == 0:
+            self.model.save(f"checkpoints/td3_jackal_trajectory_{len(self.episode_rewards)}")
+            if self.verbose > 0:
+                print(f"Model saved at episode {len(self.episode_rewards)}")
 
         if ENABLE_RENDER:
             self.env.render()  # Use your MuJoCo renderer here
@@ -55,7 +62,7 @@ class EpisodeRewardCallback(BaseCallback):
 
             # Set new random trajectory for next episode
             trajectory = generate_random_waypoints()
-            self.env.envs[0].unwrapped.setReferenceWaypoints(trajectory)
+            self.env.unwrapped.setReferenceWaypoints(trajectory)
 
         return True
 
@@ -72,15 +79,15 @@ class EpisodeRewardCallback(BaseCallback):
             plt.savefig(self.plot_path)
             plt.close()
 
-env = make_vec_env(ENV_ID,n_envs=1)
+env = gym.make(ENV_ID)
 
 # Initial trajectory
 trajectory = generate_random_waypoints()
-env.envs[0].unwrapped.setReferenceWaypoints(trajectory)
+env.unwrapped.setReferenceWaypoints(trajectory)
 
 # Add noise for exploration
 n_actions = env.action_space.shape[0]
-action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.2 * np.ones(n_actions))
+action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.15 * np.ones(n_actions))
 
 # TD3 Model
 model = TD3(
@@ -91,16 +98,20 @@ model = TD3(
     buffer_size=100_000,
     learning_rate=1e-3,
     batch_size=100,
-    tau=0.005,
+    train_freq=(1,"episode"),
+    tau=0.01,
+    gradient_steps=-1,
     gamma=0.99,
-    policy_delay=2,
+    policy_delay=10,
     target_policy_noise=0.2,
     target_noise_clip=0.5,
+    seed = 42,
+    device="cuda:0" if torch.cuda.is_available() else "cpu",
 )
 
 # Train with reward printing and trajectory update
 callback = EpisodeRewardCallback(env=env,verbose=1)
-model.learn(total_timesteps=500_000, callback=callback)
+model.learn(total_timesteps=500_000_000, callback=callback)
 
 # Save model
 model.save("td3_jackal_trajectory")
