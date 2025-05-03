@@ -4,92 +4,116 @@ import numpy as np
 import torch
 from stable_baselines3 import TD3
 from stable_baselines3.common.noise import NormalActionNoise
-from stable_baselines3.common.callbacks import BaseCallback, CheckpointCallback, EvalCallback
-from scipy.interpolate import CubicSpline
+from stable_baselines3.common.callbacks import BaseCallback, CheckpointCallback, EvalCallback, CallbackList
 from matplotlib import pyplot as plt
+import random
+import os
+import datetime
 
 # ---- Environment Setup ---- #
 ENV_ID = "JackalEnv-v0"
 ENABLE_RENDER = False
 
-
-# ---- Callback to print reward ---- #
+# ---- Callback to log reward ---- #
 class EpisodeRewardCallback(BaseCallback):
-    def __init__(self, env, verbose=True, plot_path="td3_jackal_reward_plot",save_freq=50):
+    def __init__(self, env, verbose=True, plot_path="td3_jackal_reward_plot"):
         super().__init__(verbose)
         self.env = env
-        self.verbose = verbose
-        self.plot_path = plot_path
         self.episode_rewards = []
         self.episode_reward = 0.0
-        self.save_freq = save_freq
+        self.plot_path = plot_path
 
     def _on_step(self) -> bool:
         self.episode_reward += self.locals["rewards"][0]
 
-        # if len(self.episode_rewards) > 0 and len(self.episode_rewards) % self.save_freq == 0:
-        #     self.model.save(f"checkpoints/td3_jackal_trajectory_{len(self.episode_rewards)}")
-        #     if self.verbose > 0:
-        #         print(f"Model saved at episode {len(self.episode_rewards)}")
-
         if ENABLE_RENDER:
-            self.env.render()  # Use your MuJoCo renderer here
+            self.env.render()
 
         if self.locals["dones"][0]:
-            print(f"\033[92m[Episode {len(self.episode_rewards) + 1} reward: {self.episode_reward:.2f}]\033[0m")
+            print(f"\033[92m[Episode {len(self.episode_rewards) +1} reward: {self.episode_reward:.2f}]\033[0m")
             self.episode_rewards.append(self.episode_reward)
             self.episode_reward = 0.0
-            if self.episode_rewards:
-                plt.figure(figsize=(10, 5))
-                plt.plot(self.episode_rewards, label='Episode reward')
-                plt.xlabel("Episode")
-                plt.ylabel("Reward")
-                plt.title("TD3 Training Rewards")
-                plt.grid(True)
-                plt.legend()
-                plt.tight_layout()
-                plt.savefig(self.plot_path)
-                plt.close()
-                print(f"Reward plot saved to {self.plot_path+"_{len(self.episode_rewards)}.png"}")
+
+            # Plot rewards
+            plt.figure(figsize=(10, 5))
+            plt.plot(self.episode_rewards, label='Episode reward')
+            plt.xlabel("Episode")
+            plt.ylabel("Reward")
+            plt.title("TD3 Training Rewards")
+            plt.grid(True)
+            plt.legend()
+            plt.tight_layout()
+            plt.savefig(f"{self.plot_path}.png")
+            plt.close()
         return True
 
 env = gym.make(ENV_ID)
 
 # Add noise for exploration
 n_actions = env.action_space.shape[0]
-action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.15 * np.ones(n_actions))
+action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.1 * np.ones(n_actions))
 
-# TD3 Model
+# Generate timestamp for unique checkpoint folders
+timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
+# TD3 Model with LARGE network
 model = TD3(
     policy="MlpPolicy",
     env=env,
+    policy_kwargs=dict(net_arch=dict(
+        pi=[256, 256, 128, 128, 64, 64],
+        qf=[1024, 512, 256, 128]
+    )),
     action_noise=action_noise,
     verbose=1,
-    buffer_size=100_000,
-    learning_rate=1e-3,
-    batch_size=100,
-    train_freq=(200, "step"),
-    tau=0.01,
+    buffer_size=1_000_000,
+    learning_rate=4e-5,
+    batch_size=4096,
+    train_freq=(4, "step"),
+    tau=0.002,
     gamma=0.99,
-    policy_delay=10,
+    policy_delay=2,
     target_policy_noise=0.2,
     target_noise_clip=0.5,
-    seed = 42,
+    seed=42,
     device="cuda:0" if torch.cuda.is_available() else "cpu",
 )
 
-n_episodes = 40000
-n_max_steps = 5000
+# ---- Checkpoint Callback ---- #
+checkpoint_path = f'./checkpoints/checkpoints_{timestamp}/'
+os.makedirs(checkpoint_path, exist_ok=True)
 
-CheckpointCallback = CheckpointCallback(save_freq=1000, save_path="checkpoints/", name_prefix="td3_traj_follow")
+model_path = f'./models/best_model_{timestamp}/'
+os.makedirs(model_path, exist_ok=True)
 
-EvalCallback = EvalCallback(env, best_model_save_path="best_model/",
-                              log_path="logs/", eval_freq=500)
+logs_path = f'./logs/log_{timestamp}/'
+os.makedirs(logs_path, exist_ok=True)
 
-callback = EpisodeRewardCallback(env=env,verbose=True)
+checkpoint_callback = CheckpointCallback(
+    save_freq=12_000,  # save every 10,000 steps
+    save_path=checkpoint_path,
+    name_prefix=f'td3_jackal_{timestamp}'
+)
 
-for episode in range(n_episodes):
-    model.learn(total_timesteps=n_max_steps, callback=callback,progress_bar=False, log_interval=100)
+# ---- Eval Callback ---- #
+eval_callback = EvalCallback(
+    env,
+    best_model_save_path=model_path,
+    log_path=logs_path,
+    eval_freq=60_000,  # evaluate every 50,000 steps
+    deterministic=True,
+    render=False
+)
 
-# Save model
-model.save("td3_jackal_trajectory")
+# ---- Training loop with all callbacks ---- #
+reward_callback = EpisodeRewardCallback(env=env, verbose=True)
+
+callback = CallbackList([reward_callback, checkpoint_callback, eval_callback])
+
+model.learn(
+    total_timesteps=3_000_000,
+    callback=[reward_callback, checkpoint_callback, eval_callback]
+)
+
+# Save final model
+model.save(f"td3_jackal_trajectory_large_{timestamp}")

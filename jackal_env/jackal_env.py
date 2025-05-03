@@ -32,18 +32,18 @@ class JackalEnv(gymnasium.Env):
         self.viewer = None
 
         # for environment
-        self.control_freq = 100
-        self.num_time_step = int(1.0/(self.time_step*self.control_freq))
-        self.max_steps = 2000
+        self.control_freq = 100.0
+        self.num_time_step = (1.0/(self.time_step*self.control_freq))
+        self.max_steps = 600
         self.cur_step = 0
         self.path_length = 0.0
 
         # for state
-        self.robot_pose = np.zeros(3)
+        self.robot_pose = np.zeros(4)
         self.robot_vel = np.zeros(3)
 
         # Trajectory tracking state encoding
-        self.horizon = 10.0
+        self.horizon = 10
         self.max_lateral_error = 0.5
         self.encoding_dim = self.horizon + len(self.robot_vel)
 
@@ -54,12 +54,12 @@ class JackalEnv(gymnasium.Env):
         self.action_dim = 2
         #Waypoints(4 each), robot velocities (linear and angular), robot properties (length, width, wheel diameter)
         # 4*10 + 2 + 3 = 45
-        self.state_dim = 4*self.horizon+2+3
+        self.state_dim = 45
         self.action_space = spaces.Box(-10*np.ones(self.action_dim), 10*np.ones(self.action_dim), dtype=np.float64)
         self.observation_space = spaces.Box(-np.inf*np.ones(self.state_dim), np.inf*np.ones(self.state_dim), dtype=np.float64)
 
         # reference points list
-        self.reference_waypoints = self.generate_random_waypoints(state=self.robot_pose)
+        self.reference_waypoints = []
 
 
     def reset(self,seed=None, options=None):
@@ -70,9 +70,9 @@ class JackalEnv(gymnasium.Env):
         self.cur_step = 0
         self.path_length = 0.0
         self.sim_time = 0.0
-        self.reference_waypoints.clear()
-        state = self.getFlattenState()
-        self.reference_waypoints = self.generate_random_waypoints(state)
+        self.reference_waypoints = np.empty((0, 4))
+        self.reference_waypoints = deepcopy(self.generate_random_waypoints(state=self.getStandardState()))
+        state = self.getState()
         return (state,{})
 
     def render(self, **kwargs):
@@ -82,14 +82,16 @@ class JackalEnv(gymnasium.Env):
         # clear existing markers
         self.viewer.sync()
 
-    def generate_random_waypoints(state=[0,0,0] ,duration=20, dt=0.01, max_lin_vel=1.0, max_ang_vel=0.5):
-        n_points = int(duration / dt)
-        t_query = np.linspace(0, duration, n_points)
+    def generate_random_waypoints(self,state=np.zeros((7,1)) ,duration=6, dt=0.01, max_lin_vel=1.0, max_ang_vel=0.5):
+        n_points = int(duration / dt)+1
+        t_query = np.linspace(state[0], state[0]+duration, n_points)
 
         lin_vel = np.clip(np.random.normal(0.6, 0.2, n_points), 0, max_lin_vel)
         ang_vel = np.clip(np.random.normal(0.0, 0.2, n_points), -max_ang_vel, max_ang_vel)
 
-        x, y, yaw = state
+        x = [state[1]]
+        y = [state[2]]
+        yaw = [state[3]]
         for i in range(1, n_points):
             dt_i = t_query[i] - t_query[i - 1]
             theta = yaw[-1]
@@ -97,7 +99,7 @@ class JackalEnv(gymnasium.Env):
             y.append(y[-1] + lin_vel[i] * np.sin(theta) * dt_i)
             yaw.append(yaw[-1] + ang_vel[i] * dt_i)
 
-        waypoints = list(zip(t_query, x, y, yaw))
+        waypoints = np.array([list(item) for item in zip(t_query, x, y, yaw)])
         return waypoints
 
     def getSensor(self):
@@ -121,9 +123,9 @@ class JackalEnv(gymnasium.Env):
         theta = Rotation.from_matrix(robot_mat).as_euler('zyx', degrees=False)[0]
         self.robot_pose[2] = theta
 
-        pos = deepcopy(self.robot_pose)
-        vel = deepcopy(self.robot_vel)
-        state = np.concatenate([self.sim_time],pos,vel)
+        pos = self.robot_pose.copy()
+        vel = self.robot_vel.copy()
+        state = np.concatenate([np.array([self.sim_time]), pos, vel])
         return state
 
     def getState(self):
@@ -131,7 +133,7 @@ class JackalEnv(gymnasium.Env):
         z_t = self.get_reference_point(state)
         # Robot Length, Robot Width, Wheel Diameter
         o_d = [0.508,0.43,0.1]
-        e_state = np.concatenate([z_t, np.linalg.norm(state[4:6]),state[6],o_d], axis=0,dtype=np.float64)
+        e_state = np.concatenate([z_t, [np.linalg.norm(state[4:6]),state[6]],o_d], axis=0,dtype=np.float64)
         return e_state
 
     def get_reference_point(self, state):
@@ -143,8 +145,7 @@ class JackalEnv(gymnasium.Env):
             Returns:
             ref_points: Segment of the trajectory of horizon STEPS
         """        
-        future_points = [p for p in self.reference_waypoints if p[0] >= state[0]]
-        
+        future_points = [deepcopy(p) for p in self.reference_waypoints if p[0] > state[0]]
         # If no future points are found, use the current position of the robot but with zero orientation
         if len(future_points) == 0:
             future_points = np.tile([state[0],state[1],state[2],state[3]],(self.horizon,1))
@@ -155,7 +156,7 @@ class JackalEnv(gymnasium.Env):
         # If there are future points but not enough to fill the horizon, fill the rest with the last point
         elif len(future_points)  < self.horizon:
             ref_point = future_points
-            dt = ref_point[-1][0] - ref_point[-2][0]
+            dt = self.time_step*self.num_time_step
             for _ in range(self.horizon - len(ref_point)):
                 ref_point.append(ref_point[-1].copy())
                 ref_point[-1][0] += dt
@@ -164,39 +165,29 @@ class JackalEnv(gymnasium.Env):
         else:
             time_diffs = [abs(p[0] - state[0]) for p in future_points]
             idx = int(np.argmin(time_diffs))
-            ref_point = self.reference_waypoints[idx:idx + self.horizon]
+            ref_point = future_points[idx:idx + int(self.horizon)]
 
-        R = Rotation.from_euler('z', state[3], degrees=False).as_matrix()[:2,:2]
+        R = Rotation.from_euler('z', -state[3], degrees=False).as_matrix()[:2,:2]
         Rt = -R@(state[1:3])
-        ref_point_lin = np.array([[],[],[],[]])
         for i in  range(len(ref_point)):
             ref_point[i][0] = ref_point[i][0] - state[0]
             ref_point[i][1:3] = (R@(ref_point[i][1:3]) + Rt)
             ref_point[i][3] = ref_point[i][3] - state[3]
-            ref_point[0].append(ref_point[i][0])
-            ref_point[1].append(ref_point[i][1])
-            ref_point[2].append(ref_point[i][2])
-            ref_point[3].append(ref_point[i][3])
-
-        ref_point = np.array(ref_point).flatten()
+        
+        ref_point = np.array(ref_point).flatten(order='F')
         return ref_point
 
 
     def compute_tracking_error(self,state):
-        tree = KDTree([p[0] for p in self.reference_waypoints if p[0] >= state[0]])
-        _, idx = tree.query(state[0])
-        nearest_pt = self.reference_waypoints[idx]
-        return np.linalg.norm(state[1:3] - nearest_pt[1:3])
+        nearest_pt = next((p for p in self.reference_waypoints if p[0] >= state[0]), None)
+        if nearest_pt is None:
+            return 0.0,0.0
+        return np.linalg.norm(state[1:3] - nearest_pt[1:3]),abs(state[3] - nearest_pt[3])
     
-    def compute_orientation_error(self,state):
-        tree = KDTree([p[0] for p in self.reference_waypoints if p[0] >= state[0]])
-        _, idx = tree.query(state[0])
-        nearest_pt = self.reference_waypoints[idx]
-        return abs(state[3] - nearest_pt[3])
-
     def step(self, action):
         self.cur_step += 1
         self.sim_time += self.time_step * self.num_time_step
+        self.sim_time = round(self.sim_time, 4)
 
         prev_state = self.data.xpos[self.body_id]
         self.path_length = 0.0
@@ -221,24 +212,20 @@ class JackalEnv(gymnasium.Env):
 	    # Check termination and done conditions
         goal_met = (np.linalg.norm(state[1:4] - self.reference_waypoints[99][1:4]) < 0.01)
 
-        done = goal_met or (self.cur_step >= self.max_steps)
-        is_terminated = (self.compute_tracking_error(state) > 3.0) and (self.compute_orientation_error(state) > 0.1)
+        done = goal_met or (self.cur_step >= self.max_steps-1)
 
 	    # === Compute reward components ===    
     	# Positional and orientation errors
-        pos_error = self.compute_tracking_error(state)
-        orientation_error = self.compute_orientation_error(state)
+        tracking_error,orientation_error = self.compute_tracking_error(state)
 
     	# Control effort penalty
         control_penalty = v_left**2 + v_right**2
 
-   	    # Drift penalty beyond a max tolerance
-        # max_drift = 0.3
-        # drift_penalty = max(0.0, abs(lateral_error) - max_drift) ** 2
+        is_terminated = (tracking_error > 3.0) or (orientation_error > 0.5)
 
     	# === Total reward ===
         reward = (
-        	- 5.0 * pos_error
+        	- 5.0 * tracking_error
             - 5.0 * orientation_error
         	- 0.75 * control_penalty
     	)
@@ -247,7 +234,7 @@ class JackalEnv(gymnasium.Env):
                 "goal_met": goal_met,
                 "cost": self.path_length,
                 "state": state,
-                "pos_error": pos_error,
+                "pos_error": tracking_error,
                 "angle_error": orientation_error,
                 'control_penalty': control_penalty,
             }
