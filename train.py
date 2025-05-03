@@ -4,11 +4,12 @@ import numpy as np
 import torch
 from stable_baselines3 import TD3
 from stable_baselines3.common.noise import NormalActionNoise
-from stable_baselines3.common.callbacks import BaseCallback, CheckpointCallback, EvalCallback, CallbackList
+from stable_baselines3.common.callbacks import BaseCallback, CheckpointCallback, EvalCallback, CallbackList,StopTrainingOnNoModelImprovement
 from matplotlib import pyplot as plt
 import random
 import os
 import datetime
+import sys
 
 # ---- Environment Setup ---- #
 ENV_ID = "JackalEnv-v0"
@@ -16,7 +17,7 @@ ENABLE_RENDER = False
 
 # ---- Callback to log reward ---- #
 class EpisodeRewardCallback(BaseCallback):
-    def __init__(self, env, verbose=True, plot_path="td3_jackal_reward_plot"):
+    def __init__(self, env, verbose=True, plot_path="./plots/td3_jackal_reward_plot"):
         super().__init__(verbose)
         self.env = env
         self.episode_rewards = []
@@ -47,7 +48,17 @@ class EpisodeRewardCallback(BaseCallback):
             plt.close()
         return True
 
-env = gym.make(ENV_ID)
+if len(sys.argv) != 3:
+    print("Usage: python train.py <param1> <param2>")
+    sys.exit(1)
+
+wt = sys.argv[1]
+wc = sys.argv[2]
+
+print(f"Parameter 1: {wt}")
+print(f"Parameter 2: {wc}")
+
+env = gym.make(ENV_ID, wt=float(wt), wc=float(wc))
 
 # Add noise for exploration
 n_actions = env.action_space.shape[0]
@@ -79,18 +90,21 @@ model = TD3(
     device="cuda:0" if torch.cuda.is_available() else "cpu",
 )
 
-# ---- Checkpoint Callback ---- #
-checkpoint_path = f'./checkpoints/checkpoints_{timestamp}/'
+# ---- Directories ---- #
+checkpoint_path = f'./checkpoints/version_{wt}_{wc}/checkpoints_{timestamp}/'
 os.makedirs(checkpoint_path, exist_ok=True)
 
-model_path = f'./models/best_model_{timestamp}/'
+model_path = f'./models/version_{wt}_{wc}/best_model_{timestamp}/'
 os.makedirs(model_path, exist_ok=True)
 
-logs_path = f'./logs/log_{timestamp}/'
+logs_path = f'./logs/version_{wt}_{wc}/log_{timestamp}/'
 os.makedirs(logs_path, exist_ok=True)
 
+plot_path = f'./plots/version_{wt}_{wc}/td3_jackal_trajectory_large__{timestamp}/'
+os.makedirs(plot_path, exist_ok=True)
+
 checkpoint_callback = CheckpointCallback(
-    save_freq=12_000,  # save every 10,000 steps
+    save_freq=12_000,  # save every 12,000 steps
     save_path=checkpoint_path,
     name_prefix=f'td3_jackal_{timestamp}'
 )
@@ -100,20 +114,22 @@ eval_callback = EvalCallback(
     env,
     best_model_save_path=model_path,
     log_path=logs_path,
-    eval_freq=60_000,  # evaluate every 50,000 steps
+    eval_freq=6000,  # evaluate every 6000 steps
     deterministic=True,
     render=False
 )
 
 # ---- Training loop with all callbacks ---- #
-reward_callback = EpisodeRewardCallback(env=env, verbose=True)
+reward_callback = EpisodeRewardCallback(env=env, verbose=True, plot_path=plot_path)
 
-callback = CallbackList([reward_callback, checkpoint_callback, eval_callback])
+stop_train_callback = StopTrainingOnNoModelImprovement(max_no_improvement_evals=100, min_evals=100, verbose=1)
+
+callback = CallbackList([reward_callback, checkpoint_callback, eval_callback, stop_train_callback])
 
 model.learn(
     total_timesteps=3_000_000,
-    callback=[reward_callback, checkpoint_callback, eval_callback]
+    callback=callback
 )
 
 # Save final model
-model.save(f"td3_jackal_trajectory_large_{timestamp}")
+model.save(plot_path)

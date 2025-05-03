@@ -18,7 +18,7 @@ def theta2vec(theta):
 
 
 class JackalEnv(gymnasium.Env):
-    def __init__(self):
+    def __init__(self,wt = 1.0, wc = 1.0):
         abs_path = os.path.dirname(__file__)
 
         self.model = MjModel.from_xml_path(f'{abs_path}/jackal.xml')
@@ -60,6 +60,10 @@ class JackalEnv(gymnasium.Env):
 
         # reference points list
         self.reference_waypoints = []
+
+        # reward weights
+        self.wt = wt
+        self.wc = wc
 
 
     def reset(self,seed=None, options=None):
@@ -192,6 +196,7 @@ class JackalEnv(gymnasium.Env):
         prev_state = self.data.xpos[self.body_id]
         self.path_length = 0.0
         weight = 0.7
+        
         for j in range(self.n_substeps):
             mujoco.mj_forward(self.model, self.data)
 
@@ -225,9 +230,10 @@ class JackalEnv(gymnasium.Env):
 
     	# === Total reward ===
         reward = (
-        	- 5.0 * tracking_error
-            - 5.0 * orientation_error
-        	- 0.75 * control_penalty
+        	- self.wt * tracking_error
+            - self.wt * orientation_error
+        	- self.wc * control_penalty
+            - 10000.0 * is_terminated
     	)
 
         info = {
