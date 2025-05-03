@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=Jackal_trajectory_tracking_grid
-#SBATCH --output=training_grid.txt # Output file
+#SBATCH --job-name=Jackal_trajectory_tracking_grid_v3
+#SBATCH --output=training_grid_v3.txt # Output file
 #SBATCH --time=48:00:00 # Time limit (hh:mm:ss)
 #SBATCH --cpus-per-task=16
 #SBATCH --gres=gpu:1 # Number of GPUs
@@ -13,4 +13,4 @@ source ~/.bashrc
 export PATH="$HOME/anaconda3/bin:$PATH"
 source activate
 conda activate deeprl
-python train_grid_weights.py
+python train_grid_weights_v3.py
