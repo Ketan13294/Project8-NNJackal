@@ -13,7 +13,7 @@ import sys
 
 # ---- Environment Setup ---- #
 ENV_ID = "JackalEnv-v0"
-ENABLE_RENDER = False
+ENABLE_RENDER = True
 
 # ---- Callback to log reward ---- #
 class EpisodeRewardCallback(BaseCallback):
@@ -62,7 +62,7 @@ env = gym.make(ENV_ID, wt=float(wt), wc=float(wc))
 
 # Add noise for exploration
 n_actions = env.action_space.shape[0]
-action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.1 * np.ones(n_actions))
+action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.3 * np.ones(n_actions))
 
 # Generate timestamp for unique checkpoint folders
 timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -81,12 +81,12 @@ model = TD3(
     learning_rate=4e-5,
     batch_size=4096,
     train_freq=(4, "step"),
-    tau=0.002,
+    tau=0.0001,
     gamma=0.99,
     policy_delay=2,
     target_policy_noise=0.2,
     target_noise_clip=0.5,
-    seed=42,
+    seed=random.randint(0, 10000),
     device="cuda:0" if torch.cuda.is_available() else "cpu",
 )
 
@@ -109,6 +109,9 @@ checkpoint_callback = CheckpointCallback(
     name_prefix=f'td3_jackal_{timestamp}'
 )
 
+# ---- Stop Training Callback ---- #
+stop_train_callback = StopTrainingOnNoModelImprovement(max_no_improvement_evals=100, min_evals=100, verbose=1)
+
 # ---- Eval Callback ---- #
 eval_callback = EvalCallback(
     env,
@@ -116,15 +119,15 @@ eval_callback = EvalCallback(
     log_path=logs_path,
     eval_freq=6000,  # evaluate every 6000 steps
     deterministic=True,
-    render=False
+    render=False,
+    callback_after_eval=stop_train_callback
 )
 
 # ---- Training loop with all callbacks ---- #
 reward_callback = EpisodeRewardCallback(env=env, verbose=True, plot_path=plot_path)
 
-stop_train_callback = StopTrainingOnNoModelImprovement(max_no_improvement_evals=100, min_evals=100, verbose=1)
 
-callback = CallbackList([reward_callback, checkpoint_callback, eval_callback, stop_train_callback])
+callback = CallbackList([reward_callback, checkpoint_callback, eval_callback])
 
 model.learn(
     total_timesteps=3_000_000,

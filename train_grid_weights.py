@@ -106,6 +106,9 @@ for wt in [1.0,2.0,3.0,4.0,5.0]:
             name_prefix=f'td3_jackal_{timestamp}'
         )
 
+        # ---- Stop Training Callback ---- #
+        stop_train_callback = StopTrainingOnNoModelImprovement(max_no_improvement_evals=100, min_evals=100, verbose=1)
+
         # ---- Eval Callback ---- #
         eval_callback = EvalCallback(
             env,
@@ -113,15 +116,15 @@ for wt in [1.0,2.0,3.0,4.0,5.0]:
             log_path=logs_path,
             eval_freq=6000,  # evaluate every 6000 steps
             deterministic=True,
-            render=False
+            render=False,
+            callback_after_eval=stop_train_callback
         )
 
         # ---- Training loop with all callbacks ---- #
         reward_callback = EpisodeRewardCallback(env=env, verbose=True, plot_path=plot_path)
 
-        stop_train_callback = StopTrainingOnNoModelImprovement(max_no_improvement_evals=100, min_evals=100, verbose=1)
 
-        callback = CallbackList([reward_callback, checkpoint_callback, eval_callback, stop_train_callback])
+        callback = CallbackList([reward_callback, checkpoint_callback, eval_callback])
 
         model.learn(
             total_timesteps=3_000_000,
