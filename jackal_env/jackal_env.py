@@ -233,7 +233,7 @@ class JackalEnv(gymnasium.Env):
         	- self.wt * tracking_error
             - self.wt * orientation_error
         	- self.wc * control_penalty
-            - 1000.0 * is_terminated
+            - 5000.0 * is_terminated
     	)
 
         info = {
