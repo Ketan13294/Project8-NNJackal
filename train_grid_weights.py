@@ -59,12 +59,11 @@ for wt in [1.0,2.0,3.0,4.0,5.0]:
 
         # Add noise for exploration
         n_actions = env.action_space.shape[0]
-        action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.1 * np.ones(n_actions))
+        action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=np.array([0.3,0.3]))
 
         # Generate timestamp for unique checkpoint folders
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         
-
         # TD3 Model with LARGE network
         model = TD3(
             policy="MlpPolicy",
@@ -79,7 +78,7 @@ for wt in [1.0,2.0,3.0,4.0,5.0]:
             learning_rate=4e-5,
             batch_size=4096,
             train_freq=(4, "step"),
-            tau=0.002,
+            tau=0.0001,
             gamma=0.99,
             policy_delay=2,
             target_policy_noise=0.2,
@@ -126,7 +125,8 @@ for wt in [1.0,2.0,3.0,4.0,5.0]:
 
         model.learn(
             total_timesteps=3_000_000,
-            callback=callback
+            callback=callback,
+            log_interval=10
         )
 
         # Save final model
