@@ -6,14 +6,28 @@ This module converts natural-language commands into center-of-mass (COM) traject
 
 1. Clone or enter your project’s root directory.  
 2. Install dependencies:  
-  
-   python==3.12.0
-   gymnasium==0.28.1
-   mujoco==3.3.1
-   scipy==1.15.2
-   numpy==1.26.4
-   torch>=1.13.1
-   transformers>=4.30.0
+   ```bash
+   pip install numpy torch transformers datasets scikit-learn pandas matplotlib gymnasium mujoco scipy
+   ```
+
+## Directory Structure
+
+```
+.
+├── improved_jackal_trajectory.py    # Core trajectory generator class
+├── jackal_nlp_interface.py          # Simple wrapper API for trajectory functions
+├── example_integration.py           # Demo: NL → trajectory → wheel commands
+├── train_intent_model.py            # Fine‑tune HF NLI model for 7‑way intents
+├── plot_intent_metrics.py           # Plot CSV logs of training metrics
+├── train.csv                        # Labeled Traning Set
+├── validation.csv                   # Validation set
+└── README.md                        # This file
+```
+
+## Data Files
+
+- **train.csv**: Labeled training set for intent classification, with columns `text` and `label` (0–6).  
+- **validation.csv**: Validation set for evaluation, same format.
 
 ## Overview
 
@@ -27,25 +41,41 @@ and produces a smooth, discretized list of waypoints `[[x, y, θ], …]` suitabl
 
 ## Usage
 
-### Simple integration
-
-```python
-from nlp_trajectory.jackal_nlp_interface import get_trajectory
-
-# Get a trajectory for “move forward”:
-trajectory = get_trajectory("move forward 1 meter")
-# → [[0.0,0.0,0.0], [0.05,0.0,0.0], …, [1.0,0.0,0.0]]
-```
-
-### Command-line demo
+### Intent Model Training
 
 ```bash
-python nlp_trajectory/example_integration.py
+python train_intent_model.py \
+  --train_csv train.csv \
+  --val_csv validation.csv \
+  --output_dir intent_model \
+  --epochs 16 \
+  --batch_size 64 \
+  --
 ```
 
-### Swapping in a custom model
+### Plotting Training Metrics
 
-By default, the generator uses Hugging Face’s **distilbert-base-uncased** zero-shot classifier. To use your own model (local or remote), edit the initialization in `jackal_nlp_interface.py`:
+```bash
+python plot_intent_metrics.py
+```
+
+### Simple Integration
+
+```python
+from jackal_nlp_interface import get_trajectory
+
+trajectory = get_trajectory("move forward 1 meter")
+```
+
+### Command-Line Demo
+
+```bash
+python example_integration.py
+```
+
+### Custom Zero-Shot Model
+
+To use a custom model, edit the initialization in `jackal_nlp_interface.py`:
 
 ```diff
 - _nlp_generator = JackalTrajectoryGenerator()
@@ -54,22 +84,21 @@ By default, the generator uses Hugging Face’s **distilbert-base-uncased** zero
 
 ## Supported Commands
 
-- **Move**:  
+- **Move**  
   - `move forward 2 meters`  
   - `go back 50 cm`  
-- **Turn**:  
+- **Turn**  
   - `turn left 90 degrees`  
   - `rotate right 45 degrees`  
-- **Goto**:  
+- **Goto**  
   - `go to position (1.5, 2.0)`  
-- **Stop**:  
+- **Stop**  
   - `stop`
 
 ## Notes
 
-- Numerical parameters (distance in m/cm, angles in °/rad) are extracted via regex currently.  
-- Intent classification is performed by the zero-shot LLM, with a substring-match fallback if loading fails.  
-- Customize `control_freq`, `max_linear_speed`, etc., by editing `improved_jackal_trajectory.py`.  
+- Numerical parameters (distances, angles) are extracted via regex.  
+- Customize parameters need to match the robot, like `control_freq`, `max_linear_speed`, etc., at the top of `improved_jackal_trajectory.py`.  
 
 ---
 

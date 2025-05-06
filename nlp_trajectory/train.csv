@@ -1,0 +1,1301 @@
+text,label
+could you go forward 2.75 m,0
+please go backward 1.1 meters,1
+please move back 3.57 meters,1
+would you step back 3.59 m,1
+would you proceed ahead 0.63 meters,0
+please rotate left 125.0 degrees,2
+would you go backward 2.67 m,1
+would you move back 4.6 meter,1
+please turn right 202.7 degrees,3
+could you please move ahead 1.24 m,0
+kindly rotate right 318.8°,3
+kindly pause,6
+please move back 3.69 meter,1
+kindly cease movement,6
+would you rotate 273.4 radians,4
+please turn left 151.7 degrees,2
+rotate left 312.9°,2
+would you move backward 1.0 m,1
+would you could you rotate left 90.8 degrees,2
+could you go forward 2.75 meters,0
+would you move forward 3.92 m,0
+kindly go forward 4.82 m,0
+would you could you go forward 4.1 meters,0
+could you go forward 3.02 meters,0
+could you move forward 4.76 meters,0
+could you go forward 3.18 meters,0
+would you turn left 215.4 degrees,2
+would you move back 2.96 meter,1
+kindly could you rotate right 117.2 degrees,3
+please move ahead 3.2 meter,0
+would you go backward 3.49 m,1
+kindly right turn 308.2 degrees,3
+turn right 55.7 degrees,3
+kindly rotate by 299.6°,4
+kindly advance 3.88 m,0
+kindly proceed ahead 1.75 meters,0
+please left turn 148.9 degrees,2
+could you proceed ahead 4.84 meters,0
+kindly go forward 0.92 meters,0
+would you rotate left 303.0 degrees,2
+could you could you rotate left 229.0 degrees,2
+"kindly navigate to position (1.4,4.68)",5
+kindly could you go forward 0.64 meters,0
+kindly move forward 1.31 meters,0
+please rotate right 103.1 deg,3
+go backward 3.65 meters,1
+please rotate 149.0 radians,4
+"kindly proceed to (0.8,2.32)",5
+would you move back 1.71 meters,1
+would you cease movement,6
+please please rotate right 176.1 deg,3
+kindly please rotate left 191.1 deg,2
+could you could you go forward 3.6 meters,0
+could you could you rotate left 281.4 degrees,2
+"kindly navigate to position (2.88,-0.76)",5
+kindly move back 2.15 meters,1
+please go backward 1.32 meters,1
+please left turn 116.9 degrees,2
+"please move to (-1.93,3.72)",5
+could you advance 2.22 m,0
+spin 138.5 deg,4
+please move backward 4.22 m,1
+please move backward 1.48 meters,1
+left turn 188.3 degrees,2
+please rotate left 350.5°,2
+please please rotate left 330.1 deg,2
+reverse 3.17 m,1
+kindly move ahead 1.57 meter,0
+please rotate right 49.7°,3
+please halt,6
+please move back 4.91 meters,1
+please pause,6
+could you move forward 2.82 meters,0
+halt!,6
+please spin 46.3 deg,4
+please rotate left 199.9 deg,2
+"move to (-3.61,1.8)",5
+kindly rotate left 72.1°,2
+move back 1.79 meters,1
+would you reverse 4.95 m,1
+could you could you rotate left 124.6 degrees,2
+spin right 53.8 deg,3
+would you move ahead 0.36 meter,0
+kindly rotate right 17.9 degrees,3
+kindly cease movement,6
+"could you move to (-3.69,-3.19)",5
+"kindly proceed to (0.67,-1.67)",5
+"could you proceed to (-4.96,-3.58)",5
+halt,6
+could you back up 1.28 meters,1
+please stop now,6
+"kindly navigate to position (-1.97,0.83)",5
+spin right 159.3 deg,3
+would you spin right 257.1 deg,3
+please please move ahead 1.41 m,0
+"navigate to position (-2.7,0.37)",5
+would you move back 4.13 meters,1
+would you turn right 149.6 degrees,3
+please rotate left 165.1°,2
+could you move backward 1.87 m,1
+could you rotate right 165.0°,3
+would you right turn 308.0 degrees,3
+could you could you rotate left 322.9 degrees,2
+would you proceed ahead 0.64 meters,0
+kindly move ahead 4.58 meters,0
+could you go backward 0.45 meters,1
+could you spin left 17.2 deg,2
+could you move backward 3.7 m,1
+kindly advance 4.06 meters,0
+please move ahead 0.37 meters,0
+"please go to position (0.41,-0.64)",5
+kindly step back 1.51 m,1
+please stop,6
+step back 2.35 m,1
+rotate left 262.0°,2
+would you go forward 3.47 m,0
+could you move back 0.65 meters,1
+please could you go forward 4.09 meters,0
+please please go backward 0.61 m,1
+proceed ahead 4.77 meters,0
+could you step back 3.1 m,1
+spin right 170.5 deg,3
+please please go backward 3.62 m,1
+would you move ahead 0.62 meter,0
+would you go backward 4.36 m,1
+"move to (-0.71,0.14)",5
+kindly move back 4.87 meters,1
+would you move back 3.03 meter,1
+"could you move to (3.69,3.51)",5
+"proceed to (2.9,-0.58)",5
+kindly move forward 4.23 meters,0
+please rotate left 327.0 deg,2
+move back 4.75 meter,1
+go forward 4.82 m,0
+rotate left 325.0°,2
+kindly move forward 4.21 m,0
+kindly move ahead 0.99 meter,0
+could you go backward 4.16 meters,1
+kindly step back 4.12 m,1
+would you cease movement,6
+please turn right 321.2 degrees,3
+could you rotate by 359.2°,4
+could you advance 1.74 m,0
+turn left 51.7 degrees,2
+would you advance 0.39 meters,0
+kindly spin left 125.3 deg,2
+would you step back 3.78 m,1
+"would you navigate to position (-0.52,3.08)",5
+please move backward 4.39 m,1
+please move backward 2.11 meters,1
+kindly go backward 2.81 meters,1
+spin right 70.2 deg,3
+kindly move back 3.72 meters,1
+please could you rotate right 250.3 degrees,3
+kindly please rotate right 139.1 deg,3
+could you please move ahead 0.53 m,0
+would you move back 1.03 meters,1
+kindly could you move backward 0.87 meters,1
+would you go backward 3.44 meters,1
+proceed ahead 4.09 meters,0
+could you rotate by 239.5°,4
+could you move back 3.2 meters,1
+could you left turn 40.3 degrees,2
+please move back 2.15 meters,1
+please move back 1.36 meters,1
+please please go backward 4.8 m,1
+kindly please go forward 1.89 m,0
+kindly move forward 4.27 meters,0
+would you spin left 10.5 deg,2
+kindly halt,6
+kindly move ahead 2.2 meter,0
+please go forward 1.71 meters,0
+could you could you rotate left 201.0 degrees,2
+kindly please rotate right 36.1 deg,3
+please please rotate left 52.0 deg,2
+could you rotate right 102.9 degrees,3
+could you could you rotate left 198.8 degrees,2
+would you could you rotate right 323.8 degrees,3
+kindly rotate left 54.8 degrees,2
+kindly please rotate right 224.7 deg,3
+would you please go backward 0.65 m,1
+rotate right 87.9°,3
+kindly advance 2.35 meters,0
+could you rotate left 58.6 degrees,2
+would you advance 0.98 m,0
+would you could you go forward 3.45 meters,0
+rotate right 124.1°,3
+halt,6
+please please rotate left 256.5 deg,2
+please go forward 3.13 m,0
+"please move to (3.31,-0.52)",5
+please stop now,6
+please move back 2.85 meters,1
+kindly pause,6
+kindly move ahead 2.06 meters,0
+could you please go backward 2.78 m,1
+kindly advance 4.79 m,0
+please reverse 3.0 m,1
+could you rotate left 26.6°,2
+could you move back 1.41 meter,1
+would you move back 3.47 meters,1
+kindly move ahead 0.16 meter,0
+would you move forward 3.52 meters,0
+please please stop,6
+would you turn right 92.4 degrees,3
+please move ahead 4.63 meters,0
+would you move backward 0.32 m,1
+please spin left 222.7 deg,2
+please move ahead 3.17 m,0
+please please rotate right 76.9 deg,3
+advance 4.53 m,0
+could you rotate 40.3 radians,4
+"kindly proceed to (3.55,0.58)",5
+could you rotate left 162.9°,2
+"would you proceed to (-4.94,-4.13)",5
+please spin 355.6 deg,4
+kindly move back 4.45 meters,1
+please could you rotate left 158.5 degrees,2
+could you go backward 2.65 meters,1
+please rotate left 246.0 deg,2
+go forward 3.64 meters,0
+please please move ahead 3.34 m,0
+please reverse 1.41 m,1
+would you back up 4.21 meters,1
+would you rotate by 241.4°,4
+could you right turn 187.7 degrees,3
+could you spin 232.0 deg,4
+rotate 197.7 radians,4
+please move backward 4.33 meters,1
+would you please go backward 3.83 m,1
+"please proceed to (-4.21,1.55)",5
+kindly rotate right 142.6°,3
+please reverse 1.44 m,1
+would you proceed ahead 0.7 meters,0
+please move back 2.91 meters,1
+please move ahead 2.27 meters,0
+go forward 4.66 meters,0
+please go backward 1.64 m,1
+could you reverse 1.27 m,1
+please please rotate right 314.8 deg,3
+kindly go forward 4.95 meters,0
+could you spin right 101.4 deg,3
+"could you move to (1.56,1.95)",5
+could you spin 52.0 deg,4
+kindly stop now,6
+move backward 3.81 m,1
+please move forward 2.33 meters,0
+kindly spin 98.7 deg,4
+please rotate left 100.6 deg,2
+kindly please go forward 2.99 m,0
+could you reverse 2.84 m,1
+could you could you move backward 4.38 meters,1
+would you rotate 189.1 degrees,4
+could you stop,6
+kindly go forward 4.96 meters,0
+would you advance 4.88 m,0
+kindly go forward 3.39 meters,0
+could you advance 2.88 m,0
+please turn left 18.4 degrees,2
+could you move backward 1.54 meters,1
+kindly please go backward 3.0 m,1
+kindly go forward 3.68 meters,0
+kindly turn left 31.2 degrees,2
+could you right turn 285.3 degrees,3
+kindly please go backward 0.65 m,1
+could you please move ahead 1.45 m,0
+kindly rotate left 167.5 degrees,2
+move forward 3.15 m,0
+could you turn left 32.9 degrees,2
+please go backward 3.88 meters,1
+rotate right 335.8°,3
+please rotate left 272.6 degrees,2
+please move forward 2.42 m,0
+kindly spin right 193.5 deg,3
+would you rotate right 198.2°,3
+please go backward 1.81 m,1
+would you spin 277.7 deg,4
+please rotate left 43.8 deg,2
+would you turn left 60.6 degrees,2
+would you rotate left 145.8°,2
+kindly move backward 3.19 m,1
+kindly halt,6
+kindly halt!,6
+"kindly navigate to position (-1.87,0.32)",5
+move back 2.2 meters,1
+kindly move back 3.07 meter,1
+rotate 212.1 degrees,4
+kindly pause,6
+could you spin left 65.1 deg,2
+please move ahead 3.8 meters,0
+please advance 2.86 m,0
+please move ahead 2.09 m,0
+kindly please move ahead 2.0 m,0
+please could you go forward 0.37 meters,0
+kindly move back 1.44 meters,1
+kindly step back 1.09 m,1
+could you please rotate right 304.5 deg,3
+could you go backward 2.47 m,1
+would you right turn 243.0 degrees,3
+kindly spin 238.3 deg,4
+"kindly navigate to position (-3.68,0.61)",5
+kindly pause,6
+rotate right 15.7°,3
+kindly back up 3.42 meters,1
+would you cease movement,6
+advance 1.38 meters,0
+kindly advance 2.87 meters,0
+spin right 354.7 deg,3
+could you rotate right 308.2 degrees,3
+kindly please rotate right 168.2 deg,3
+could you stop now,6
+pause,6
+could you move forward 0.85 m,0
+please go forward 0.93 meters,0
+kindly rotate left 91.6°,2
+spin 201.6 deg,4
+would you please go forward 3.1 m,0
+could you spin left 119.7 deg,2
+turn left 255.6 degrees,2
+move backward 2.99 m,1
+spin left 316.3 deg,2
+would you please go forward 1.1 m,0
+please rotate right 23.5 deg,3
+kindly halt!,6
+please go backward 3.05 m,1
+could you rotate right 251.9°,3
+would you please rotate left 121.4 deg,2
+please halt,6
+right turn 69.3 degrees,3
+kindly stop now,6
+please turn left 209.6 degrees,2
+kindly could you rotate right 127.2 degrees,3
+rotate left 105.0°,2
+left turn 33.2 degrees,2
+kindly please rotate left 290.6 deg,2
+kindly step back 0.55 m,1
+go forward 3.36 meters,0
+could you move forward 4.59 m,0
+please could you rotate left 136.9 degrees,2
+please please move ahead 4.66 m,0
+please halt!,6
+"could you navigate to position (3.04,0.75)",5
+would you could you go forward 4.42 meters,0
+kindly advance 1.85 m,0
+could you go forward 4.11 meters,0
+"go to position (3.81,4.73)",5
+could you go backward 2.74 m,1
+could you please go backward 1.84 m,1
+"move to (4.34,-3.64)",5
+please rotate left 40.3 deg,2
+please move back 2.69 meter,1
+could you rotate left 349.0 degrees,2
+rotate by 106.5°,4
+please move backward 1.65 meters,1
+could you go backward 2.78 m,1
+please rotate left 243.4 deg,2
+would you move back 4.29 meter,1
+please move ahead 0.26 meter,0
+spin right 285.5 deg,3
+please rotate right 331.9 degrees,3
+"please go to position (-3.19,2.02)",5
+kindly rotate left 263.0°,2
+would you move back 0.44 meter,1
+please go forward 0.78 m,0
+please move backward 3.61 m,1
+turn right 79.4 degrees,3
+would you could you go forward 2.65 meters,0
+please please go forward 2.82 m,0
+could you could you rotate right 243.2 degrees,3
+could you proceed ahead 3.18 meters,0
+kindly rotate by 93.7°,4
+could you advance 2.89 meters,0
+would you spin left 91.3 deg,2
+would you go backward 4.83 meters,1
+could you could you go forward 2.81 meters,0
+please rotate left 206.4 deg,2
+"could you proceed to (1.12,4.23)",5
+could you could you rotate right 212.6 degrees,3
+kindly pause,6
+please could you rotate left 204.3 degrees,2
+kindly move back 4.4 meters,1
+go forward 1.38 meters,0
+please back up 2.32 meters,1
+kindly could you rotate left 123.2 degrees,2
+kindly back up 4.45 meters,1
+could you move ahead 3.09 meter,0
+could you move forward 3.16 m,0
+kindly pause,6
+please move ahead 3.91 m,0
+would you move forward 4.8 meters,0
+would you move backward 3.32 meters,1
+could you spin left 2.8 deg,2
+would you rotate left 4.3°,2
+would you spin right 347.9 deg,3
+would you rotate 235.3 degrees,4
+please could you rotate right 344.0 degrees,3
+would you please go backward 4.05 m,1
+please rotate left 13.7°,2
+could you turn right 64.3 degrees,3
+advance 3.55 meters,0
+would you go backward 4.02 m,1
+kindly move back 0.96 meter,1
+please could you go forward 1.11 meters,0
+please go forward 0.78 m,0
+kindly move ahead 2.49 meters,0
+kindly rotate right 103.1°,3
+rotate left 158.0°,2
+kindly could you go forward 0.97 meters,0
+kindly rotate right 325.8°,3
+please proceed ahead 4.14 meters,0
+please rotate 164.0 degrees,4
+please reverse 2.67 m,1
+spin left 255.6 deg,2
+kindly rotate 98.9 radians,4
+please go forward 2.48 m,0
+would you move ahead 0.49 meters,0
+could you spin 305.3 deg,4
+"could you navigate to position (-4.38,-0.1)",5
+could you stop,6
+could you please rotate left 30.6 deg,2
+proceed ahead 3.49 meters,0
+spin left 80.2 deg,2
+please go forward 4.31 meters,0
+could you rotate left 333.1 degrees,2
+"please go to position (-0.21,-4.28)",5
+move back 3.73 meters,1
+could you move back 0.93 meters,1
+move back 3.12 meters,1
+"would you navigate to position (4.8,2.77)",5
+could you rotate 247.7 radians,4
+rotate right 276.5°,3
+kindly move backward 2.58 m,1
+rotate right 312.1°,3
+would you advance 1.09 meters,0
+rotate right 8.1 degrees,3
+would you spin left 193.6 deg,2
+kindly reverse 2.37 m,1
+could you go backward 2.99 m,1
+would you move backward 3.14 m,1
+please go backward 3.31 m,1
+cease movement,6
+could you rotate left 321.1°,2
+"could you navigate to position (3.41,0.55)",5
+could you please stop,6
+would you advance 1.42 meters,0
+could you halt,6
+kindly spin left 82.9 deg,2
+would you spin left 106.1 deg,2
+kindly halt,6
+spin 132.8 deg,4
+kindly spin left 61.1 deg,2
+please halt!,6
+could you could you rotate left 50.2 degrees,2
+could you spin right 34.2 deg,3
+would you could you rotate right 146.5 degrees,3
+please please rotate right 131.6 deg,3
+kindly please rotate right 110.8 deg,3
+please spin left 203.5 deg,2
+would you rotate left 153.0°,2
+please spin right 76.0 deg,3
+would you rotate left 230.5°,2
+kindly proceed ahead 4.16 meters,0
+would you step back 4.18 m,1
+kindly right turn 231.9 degrees,3
+would you spin left 27.4 deg,2
+spin right 95.6 deg,3
+would you please move ahead 4.69 m,0
+please spin left 57.4 deg,2
+kindly left turn 179.6 degrees,2
+would you rotate right 136.2°,3
+please could you go forward 4.21 meters,0
+go forward 4.73 meters,0
+could you move back 1.68 meters,1
+reverse 3.16 m,1
+could you move backward 3.03 meters,1
+please move back 3.25 meter,1
+would you move backward 2.41 meters,1
+please could you rotate left 30.0 degrees,2
+"move to (4.33,-0.55)",5
+"please navigate to position (-3.34,-0.21)",5
+could you advance 3.03 meters,0
+please step back 4.34 m,1
+could you rotate 122.4 degrees,4
+would you move back 1.13 meters,1
+kindly move forward 0.6 meters,0
+step back 1.39 m,1
+kindly halt!,6
+would you spin left 67.6 deg,2
+could you left turn 1.1 degrees,2
+would you rotate right 305.4°,3
+could you go backward 4.98 m,1
+would you turn right 42.4 degrees,3
+turn left 134.0 degrees,2
+back up 2.15 meters,1
+kindly rotate right 252.3 degrees,3
+"could you proceed to (-2.68,0.81)",5
+kindly move backward 2.76 m,1
+would you please go backward 2.4 m,1
+please go backward 2.04 m,1
+go backward 2.47 m,1
+could you rotate 50.3 degrees,4
+"please navigate to position (-4.41,-2.32)",5
+could you move ahead 3.16 meter,0
+kindly please rotate left 29.5 deg,2
+please rotate right 282.7°,3
+would you could you rotate right 212.0 degrees,3
+kindly move backward 3.41 m,1
+kindly rotate by 204.7°,4
+could you move back 4.82 meters,1
+"could you go to position (2.34,2.54)",5
+please please stop,6
+could you move back 1.17 meters,1
+please rotate left 145.0°,2
+advance 2.78 m,0
+please please go forward 4.57 m,0
+kindly please rotate right 315.1 deg,3
+please cease movement,6
+spin 32.7 deg,4
+could you spin left 91.4 deg,2
+kindly move backward 0.93 m,1
+could you could you go forward 0.11 meters,0
+could you turn right 138.1 degrees,3
+please move ahead 3.78 meter,0
+would you right turn 241.7 degrees,3
+please go forward 1.57 m,0
+rotate by 343.0°,4
+kindly rotate left 37.3 degrees,2
+kindly go forward 1.86 meters,0
+could you rotate right 3.5 degrees,3
+"please proceed to (-2.03,3.28)",5
+kindly left turn 194.4 degrees,2
+could you rotate right 237.3 degrees,3
+would you please move ahead 0.19 m,0
+would you move backward 1.72 m,1
+would you rotate left 8.3 degrees,2
+kindly rotate by 185.3°,4
+kindly rotate left 48.1°,2
+would you rotate by 11.9°,4
+would you go forward 1.38 meters,0
+would you move back 4.37 meters,1
+reverse 4.36 m,1
+could you go forward 1.99 meters,0
+would you please move ahead 0.23 m,0
+kindly left turn 131.3 degrees,2
+could you advance 3.55 meters,0
+could you halt,6
+would you move ahead 3.51 meter,0
+could you please rotate left 95.5 deg,2
+"proceed to (3.69,0.7)",5
+please please move ahead 2.6 m,0
+"could you move to (2.91,3.41)",5
+could you back up 0.83 meters,1
+"navigate to position (-2.81,4.41)",5
+would you move backward 4.15 m,1
+could you move back 3.71 meter,1
+please move backward 0.94 meters,1
+please spin 275.6 deg,4
+would you halt!,6
+could you please move ahead 2.02 m,0
+would you move ahead 4.94 meter,0
+rotate left 144.2°,2
+could you rotate 167.8 radians,4
+move forward 2.67 meters,0
+please pause,6
+please turn right 324.0 degrees,3
+kindly move forward 2.58 m,0
+kindly move backward 1.31 m,1
+kindly could you move backward 2.17 meters,1
+would you move forward 2.07 meters,0
+kindly move backward 0.53 m,1
+kindly stop,6
+kindly rotate 343.3 radians,4
+please rotate left 187.6°,2
+"kindly move to (-3.81,3.77)",5
+please rotate by 158.5°,4
+please move backward 4.88 meters,1
+would you stop now,6
+would you please rotate right 87.7 deg,3
+please rotate 223.0 radians,4
+please pause,6
+please rotate right 343.1 degrees,3
+step back 4.97 m,1
+halt,6
+kindly move back 2.4 meters,1
+kindly spin right 174.2 deg,3
+kindly rotate left 1.4 degrees,2
+move ahead 2.82 meter,0
+please move ahead 4.56 meter,0
+could you spin left 174.7 deg,2
+"would you move to (3.79,1.17)",5
+would you could you rotate left 160.3 degrees,2
+step back 4.36 m,1
+would you please go backward 0.31 m,1
+step back 4.96 m,1
+stop now,6
+would you rotate left 193.0°,2
+kindly rotate by 358.1°,4
+"proceed to (0.83,1.52)",5
+would you go forward 0.82 m,0
+please go backward 3.95 m,1
+rotate right 211.2°,3
+kindly step back 3.3 m,1
+kindly go forward 0.86 m,0
+please spin 322.6 deg,4
+would you left turn 281.7 degrees,2
+left turn 98.7 degrees,2
+would you could you rotate right 352.8 degrees,3
+please spin 186.8 deg,4
+could you go forward 0.96 meters,0
+could you spin 163.8 deg,4
+would you rotate left 138.8 degrees,2
+kindly move backward 1.47 meters,1
+could you cease movement,6
+rotate left 275.3°,2
+would you turn right 152.9 degrees,3
+would you rotate left 31.6°,2
+please could you rotate right 263.6 degrees,3
+could you move forward 1.49 meters,0
+rotate left 303.0 degrees,2
+kindly move backward 4.84 m,1
+go forward 2.3 m,0
+"would you navigate to position (0.65,1.17)",5
+go backward 1.54 m,1
+kindly turn right 167.4 degrees,3
+please step back 2.68 m,1
+could you go forward 3.59 meters,0
+please move backward 4.68 m,1
+"kindly proceed to (-0.37,-3.22)",5
+"please navigate to position (-1.73,0.72)",5
+rotate left 96.4°,2
+would you turn right 39.8 degrees,3
+left turn 30.3 degrees,2
+spin right 313.5 deg,3
+please go forward 3.82 meters,0
+could you left turn 326.0 degrees,2
+please could you move backward 1.56 meters,1
+would you please move ahead 3.73 m,0
+rotate right 74.6 degrees,3
+step back 0.31 m,1
+"please go to position (0.95,-1.54)",5
+kindly please go forward 4.49 m,0
+could you rotate 199.4 degrees,4
+move back 1.35 meter,1
+could you please move ahead 3.34 m,0
+kindly move ahead 1.99 meters,0
+please please go backward 3.17 m,1
+could you rotate right 230.8°,3
+could you right turn 265.0 degrees,3
+would you move back 3.79 meters,1
+"kindly go to position (0.49,-1.8)",5
+move ahead 4.07 meters,0
+please move backward 2.1 m,1
+please move forward 4.2 m,0
+"could you proceed to (-2.72,-2.02)",5
+kindly rotate 6.3 radians,4
+kindly rotate left 320.1 degrees,2
+please rotate left 344.8 deg,2
+kindly right turn 207.4 degrees,3
+kindly rotate left 36.2°,2
+would you please rotate right 310.5 deg,3
+kindly please go forward 2.89 m,0
+would you please rotate right 64.7 deg,3
+"go to position (1.75,-3.29)",5
+kindly rotate by 176.1°,4
+please go backward 4.84 meters,1
+kindly go forward 3.46 meters,0
+"could you go to position (1.96,-1.11)",5
+kindly could you rotate right 206.8 degrees,3
+"please navigate to position (3.14,0.51)",5
+please move ahead 1.8 meters,0
+would you cease movement,6
+rotate right 87.2 degrees,3
+please please move ahead 1.38 m,0
+would you please stop,6
+would you move back 4.23 meter,1
+could you advance 3.4 meters,0
+would you please rotate left 301.0 deg,2
+could you go forward 2.06 meters,0
+would you rotate 344.1 radians,4
+kindly rotate 273.6 radians,4
+kindly please rotate right 6.2 deg,3
+would you rotate by 335.8°,4
+kindly halt!,6
+kindly could you move backward 0.78 meters,1
+could you could you rotate left 313.7 degrees,2
+kindly advance 3.26 meters,0
+please pause,6
+please step back 1.03 m,1
+kindly could you rotate left 21.9 degrees,2
+back up 4.89 meters,1
+would you spin 184.6 deg,4
+please halt!,6
+kindly rotate by 34.2°,4
+"could you navigate to position (1.24,1.22)",5
+cease movement,6
+please turn left 276.9 degrees,2
+right turn 177.5 degrees,3
+kindly spin 295.7 deg,4
+would you rotate 330.9 radians,4
+"could you proceed to (-1.79,2.54)",5
+move backward 2.8 m,1
+"proceed to (4.7,2.51)",5
+kindly rotate 156.4 degrees,4
+kindly spin 78.1 deg,4
+could you advance 2.33 m,0
+kindly rotate left 231.7 degrees,2
+move forward 4.17 meters,0
+could you back up 4.51 meters,1
+kindly advance 2.18 meters,0
+"could you navigate to position (0.23,-2.6)",5
+could you move backward 2.7 meters,1
+would you please rotate left 183.9 deg,2
+kindly back up 1.31 meters,1
+would you right turn 154.5 degrees,3
+could you back up 2.27 meters,1
+could you could you go forward 1.61 meters,0
+"go to position (-1.3,-4.59)",5
+kindly cease movement,6
+could you move forward 2.63 m,0
+could you proceed ahead 0.15 meters,0
+kindly pause,6
+kindly move back 1.13 meters,1
+please move backward 2.58 m,1
+could you go forward 1.33 m,0
+could you move backward 4.12 meters,1
+"could you move to (3.57,3.16)",5
+please right turn 270.9 degrees,3
+move backward 3.87 meters,1
+kindly proceed ahead 3.21 meters,0
+move back 3.46 meters,1
+please go backward 4.38 m,1
+"please navigate to position (2.83,2.93)",5
+could you advance 2.88 meters,0
+kindly rotate by 215.2°,4
+go forward 1.76 meters,0
+"would you proceed to (-0.37,3.55)",5
+go forward 0.98 meters,0
+please please rotate left 139.7 deg,2
+kindly back up 2.63 meters,1
+please please move ahead 4.57 m,0
+please spin left 328.7 deg,2
+please rotate left 355.2°,2
+turn left 314.3 degrees,2
+could you advance 2.35 m,0
+please could you go forward 4.86 meters,0
+could you could you rotate right 120.7 degrees,3
+could you go forward 3.01 m,0
+kindly move backward 2.53 m,1
+please rotate left 321.3 deg,2
+kindly advance 3.84 meters,0
+could you please move ahead 0.2 m,0
+"could you move to (-3.75,-0.65)",5
+could you please rotate right 221.6 deg,3
+please rotate left 237.1°,2
+kindly rotate right 195.8°,3
+"please move to (-2.98,3.39)",5
+"go to position (-4.65,1.53)",5
+please could you rotate left 87.3 degrees,2
+please proceed ahead 4.84 meters,0
+could you move ahead 1.89 meters,0
+"please navigate to position (1.65,-4.19)",5
+could you spin left 338.8 deg,2
+please please go forward 0.49 m,0
+please please go forward 1.72 m,0
+could you please go backward 1.65 m,1
+kindly spin 289.4 deg,4
+could you spin left 265.4 deg,2
+please rotate by 332.1°,4
+please move back 2.92 meters,1
+would you rotate right 155.9°,3
+would you rotate by 324.7°,4
+kindly please rotate right 159.6 deg,3
+rotate left 293.9 degrees,2
+could you go backward 2.16 meters,1
+please move forward 4.77 meters,0
+spin right 222.7 deg,3
+would you spin 298.3 deg,4
+spin left 310.2 deg,2
+rotate left 74.6°,2
+would you rotate right 300.5°,3
+would you please stop,6
+could you move backward 4.68 meters,1
+would you move forward 2.56 meters,0
+kindly rotate left 2.6°,2
+could you stop now,6
+please could you rotate left 157.4 degrees,2
+kindly rotate by 357.9°,4
+right turn 281.4 degrees,3
+could you turn left 49.8 degrees,2
+"navigate to position (-1.0,3.45)",5
+could you right turn 25.5 degrees,3
+kindly turn right 262.5 degrees,3
+please move ahead 1.26 meters,0
+could you move back 0.67 meters,1
+kindly rotate right 100.3 degrees,3
+would you halt!,6
+please turn left 311.3 degrees,2
+kindly rotate left 305.4 degrees,2
+please proceed ahead 4.99 meters,0
+move back 2.6 meters,1
+please could you move backward 4.15 meters,1
+would you could you rotate right 11.2 degrees,3
+could you stop now,6
+kindly stop,6
+please move forward 0.46 m,0
+would you advance 1.33 m,0
+please could you rotate right 356.2 degrees,3
+kindly halt,6
+turn left 41.7 degrees,2
+could you could you go forward 0.49 meters,0
+"please move to (4.24,-1.38)",5
+could you please go backward 0.14 m,1
+kindly go forward 2.88 m,0
+kindly move back 3.36 meter,1
+could you move forward 4.94 meters,0
+rotate right 95.6°,3
+turn left 132.9 degrees,2
+kindly move forward 0.99 m,0
+could you halt!,6
+stop,6
+please spin right 243.7 deg,3
+please could you move backward 4.08 meters,1
+please stop,6
+kindly move back 3.85 meters,1
+please back up 4.05 meters,1
+kindly stop now,6
+would you move forward 0.51 m,0
+kindly back up 4.55 meters,1
+could you stop,6
+would you move back 0.59 meters,1
+would you move backward 2.26 meters,1
+please halt,6
+move forward 1.28 meters,0
+move back 1.55 meter,1
+could you left turn 12.4 degrees,2
+please could you rotate left 355.8 degrees,2
+rotate 103.5 radians,4
+move backward 3.02 meters,1
+reverse 0.8 m,1
+kindly back up 0.67 meters,1
+could you please rotate right 312.7 deg,3
+could you go forward 1.3 m,0
+please could you rotate right 17.2 degrees,3
+would you spin 222.7 deg,4
+would you rotate right 68.3 degrees,3
+"kindly navigate to position (3.81,-0.98)",5
+please left turn 356.1 degrees,2
+would you spin right 353.3 deg,3
+please please go backward 2.38 m,1
+please stop,6
+spin 47.8 deg,4
+could you spin right 278.5 deg,3
+move forward 0.17 meters,0
+please spin right 229.4 deg,3
+would you could you rotate right 62.2 degrees,3
+would you please go backward 4.14 m,1
+could you move backward 2.13 m,1
+"kindly move to (-4.55,1.48)",5
+kindly move ahead 1.37 meter,0
+please rotate 168.7 radians,4
+kindly please go forward 1.23 m,0
+please move ahead 0.73 meters,0
+could you move forward 2.09 m,0
+rotate left 330.9°,2
+could you rotate right 315.0°,3
+please move ahead 0.79 meters,0
+"would you navigate to position (-0.97,-2.49)",5
+please move forward 4.07 meters,0
+could you move ahead 4.06 meter,0
+would you move backward 0.76 meters,1
+would you please go forward 4.49 m,0
+rotate 218.9 degrees,4
+spin 159.1 deg,4
+could you stop,6
+please stop now,6
+please reverse 1.85 m,1
+kindly rotate right 320.1°,3
+could you go forward 0.33 meters,0
+halt,6
+would you turn left 28.1 degrees,2
+please turn right 190.5 degrees,3
+move ahead 1.72 meters,0
+please please move ahead 4.7 m,0
+kindly turn left 300.0 degrees,2
+could you please rotate right 96.8 deg,3
+kindly rotate 13.0 degrees,4
+kindly proceed ahead 1.08 meters,0
+would you move ahead 1.35 meter,0
+step back 2.04 m,1
+could you rotate by 83.2°,4
+please move forward 1.07 meters,0
+could you move back 4.46 meters,1
+kindly move back 2.77 meters,1
+would you could you move backward 3.97 meters,1
+could you rotate 197.9 radians,4
+would you please stop,6
+could you move ahead 4.38 meters,0
+please back up 0.51 meters,1
+rotate right 88.4 degrees,3
+could you move back 1.66 meters,1
+"would you go to position (2.16,-0.61)",5
+kindly rotate right 179.5 degrees,3
+could you please stop,6
+rotate 68.6 radians,4
+rotate right 337.0°,3
+"kindly move to (-0.28,1.26)",5
+move back 4.95 meter,1
+could you move backward 3.84 meters,1
+please move forward 3.42 m,0
+could you rotate left 91.4°,2
+"could you go to position (-3.13,2.6)",5
+"please navigate to position (3.82,-3.78)",5
+would you could you rotate left 120.2 degrees,2
+kindly reverse 2.88 m,1
+kindly advance 2.85 meters,0
+please rotate left 241.8 degrees,2
+would you please stop,6
+turn right 188.7 degrees,3
+"proceed to (-4.81,0.32)",5
+would you proceed ahead 1.64 meters,0
+please could you rotate right 137.9 degrees,3
+please rotate right 64.8 deg,3
+would you go backward 1.89 m,1
+please could you move backward 3.35 meters,1
+please please stop,6
+please rotate right 272.1 degrees,3
+could you go backward 1.84 meters,1
+"could you go to position (-2.15,2.04)",5
+please could you rotate left 79.1 degrees,2
+kindly please rotate right 182.7 deg,3
+please move backward 0.23 m,1
+back up 0.44 meters,1
+rotate right 319.5°,3
+could you rotate right 202.9 degrees,3
+could you right turn 38.4 degrees,3
+please please move ahead 3.76 m,0
+would you rotate right 84.8 degrees,3
+please please go backward 0.45 m,1
+please go forward 3.09 m,0
+please could you go forward 1.49 meters,0
+kindly rotate 292.7 radians,4
+turn right 255.2 degrees,3
+please please go forward 1.31 m,0
+kindly rotate 1.1 degrees,4
+could you rotate 275.2 degrees,4
+kindly go forward 4.95 meters,0
+could you please move ahead 3.92 m,0
+please could you rotate left 255.5 degrees,2
+would you spin right 148.4 deg,3
+kindly proceed ahead 0.14 meters,0
+please move back 3.51 meter,1
+move back 2.23 meter,1
+please please stop,6
+please please go backward 4.46 m,1
+please halt,6
+kindly advance 4.47 m,0
+kindly move forward 0.52 meters,0
+spin right 224.8 deg,3
+kindly reverse 0.65 m,1
+would you rotate 137.8 radians,4
+kindly move back 4.98 meter,1
+please go forward 4.2 m,0
+please rotate right 24.1°,3
+could you go forward 4.51 meters,0
+could you reverse 3.89 m,1
+kindly rotate left 173.2°,2
+could you move back 0.12 meters,1
+step back 3.22 m,1
+kindly could you rotate left 254.0 degrees,2
+would you spin left 170.6 deg,2
+kindly move forward 4.67 meters,0
+could you move back 1.89 meters,1
+proceed ahead 0.38 meters,0
+move ahead 2.83 meter,0
+please pause,6
+would you rotate right 6.2 degrees,3
+kindly rotate 164.0 degrees,4
+please rotate 266.4 radians,4
+would you rotate 184.5 radians,4
+kindly move backward 1.95 m,1
+would you move ahead 2.58 meter,0
+"please go to position (-3.76,-1.12)",5
+would you please move ahead 1.71 m,0
+please turn left 294.4 degrees,2
+could you could you go forward 4.44 meters,0
+kindly go backward 4.45 m,1
+would you could you rotate right 264.8 degrees,3
+could you reverse 3.47 m,1
+could you please stop,6
+could you please go forward 0.47 m,0
+could you rotate right 272.4 degrees,3
+please rotate left 173.3 deg,2
+"please proceed to (4.8,2.28)",5
+rotate right 158.1 degrees,3
+kindly rotate right 208.1°,3
+would you move backward 1.18 m,1
+would you rotate right 334.7°,3
+kindly move back 3.84 meter,1
+would you pause,6
+could you stop,6
+"move to (4.21,-3.84)",5
+go backward 1.41 m,1
+could you move ahead 1.28 meters,0
+stop now,6
+please move ahead 3.09 meters,0
+would you spin 11.9 deg,4
+could you right turn 158.9 degrees,3
+kindly spin right 322.8 deg,3
+kindly right turn 75.4 degrees,3
+would you move backward 1.41 meters,1
+go backward 0.53 meters,1
+"kindly navigate to position (4.48,-0.51)",5
+would you please go backward 3.72 m,1
+please rotate 108.2 radians,4
+please go forward 1.51 m,0
+kindly halt,6
+would you move back 4.98 meters,1
+please rotate left 297.4 degrees,2
+could you move forward 4.8 m,0
+would you move back 0.63 meters,1
+would you please go forward 2.85 m,0
+would you rotate 329.7 degrees,4
+would you could you rotate left 230.0 degrees,2
+please move ahead 3.81 m,0
+kindly please rotate right 26.5 deg,3
+could you advance 2.18 m,0
+please could you rotate right 24.9 degrees,3
+could you please rotate right 352.9 deg,3
+please go forward 3.14 m,0
+could you rotate 151.3 radians,4
+"kindly go to position (4.42,0.76)",5
+kindly rotate left 188.1°,2
+move back 0.34 meters,1
+would you could you go forward 3.11 meters,0
+please left turn 27.5 degrees,2
+kindly back up 1.52 meters,1
+"please move to (1.71,3.04)",5
+would you left turn 331.8 degrees,2
+could you proceed ahead 4.38 meters,0
+"kindly navigate to position (-3.89,0.02)",5
+could you rotate by 187.7°,4
+could you go backward 4.94 m,1
+could you could you move backward 2.82 meters,1
+kindly move forward 3.94 meters,0
+could you go backward 3.48 m,1
+kindly halt!,6
+could you rotate right 164.5 degrees,3
+please spin left 60.1 deg,2
+spin 301.5 deg,4
+kindly spin left 61.3 deg,2
+could you rotate right 15.3°,3
+turn left 151.2 degrees,2
+could you go forward 1.49 m,0
+could you rotate right 42.8 degrees,3
+go forward 0.35 m,0
+kindly please go backward 0.3 m,1
+could you move ahead 1.29 meter,0
+please move forward 4.66 meters,0
+rotate 72.5 degrees,4
+could you rotate left 40.0°,2
+advance 0.14 m,0
+please rotate right 124.7°,3
+kindly move ahead 4.66 meter,0
+could you right turn 7.2 degrees,3
+please spin 342.5 deg,4
+would you move forward 4.21 meters,0
+kindly right turn 250.5 degrees,3
+would you right turn 344.8 degrees,3
+please move forward 2.64 m,0
+move forward 1.05 m,0
+go backward 4.53 meters,1
+could you proceed ahead 1.49 meters,0
+move forward 2.86 meters,0
+could you cease movement,6
+"please go to position (-0.91,1.6)",5
+spin 344.5 deg,4
+would you rotate right 84.7°,3
+could you rotate right 180.7°,3
+back up 4.94 meters,1
+kindly move back 0.48 meters,1
+could you go backward 2.82 meters,1
+could you please rotate left 107.2 deg,2
+go backward 0.77 meters,1
+could you go backward 2.93 m,1
+please go backward 4.35 m,1
+"would you proceed to (-3.78,-1.81)",5
+could you stop now,6
+halt!,6
+kindly left turn 54.2 degrees,2
+kindly right turn 276.5 degrees,3
+would you advance 0.25 m,0
+please move forward 1.84 m,0
+"please move to (0.91,-1.4)",5
+could you go forward 4.68 m,0
+please rotate 35.4 degrees,4
+could you go backward 3.45 meters,1
+kindly go forward 0.56 meters,0
+please rotate 163.7 radians,4
+could you rotate 7.1 degrees,4
+kindly halt,6
+could you move backward 4.53 meters,1
+please left turn 91.7 degrees,2
+halt,6
+could you move backward 4.26 m,1
+kindly advance 3.34 m,0
+kindly right turn 134.0 degrees,3
+move backward 1.26 m,1
+please move forward 2.05 meters,0
+kindly go forward 1.74 meters,0
+could you rotate right 8.8 degrees,3
+could you rotate right 240.1 degrees,3
+move back 0.9 meters,1
+would you move back 3.25 meter,1
+move forward 0.71 m,0
+could you halt!,6
+would you reverse 0.42 m,1
+could you rotate right 315.3°,3
+move back 3.95 meters,1
+would you spin right 258.2 deg,3
+move forward 0.85 meters,0
+please please move ahead 0.53 m,0
+could you go backward 0.66 meters,1
+kindly spin right 256.7 deg,3
+could you rotate right 267.6°,3
+would you move backward 4.0 meters,1
+would you go forward 1.11 m,0
+please proceed ahead 4.0 meters,0
+kindly please rotate right 290.4 deg,3
+halt!,6
+rotate left 14.0°,2
+could you go backward 1.36 m,1
+go backward 0.5 m,1
+kindly could you rotate right 195.2 degrees,3
+kindly stop,6
+please spin 351.8 deg,4
+go backward 2.05 meters,1
+move ahead 1.73 meter,0
+please turn right 118.3 degrees,3
+stop now,6
+left turn 236.0 degrees,2
+rotate left 163.4 degrees,2
+please move backward 1.2 meters,1
+would you please stop,6
+would you move backward 0.57 m,1
+would you move back 4.62 meters,1
+could you could you rotate left 151.5 degrees,2
+could you move ahead 0.37 meter,0
+"could you go to position (4.93,-0.1)",5
+please go backward 3.72 m,1
+would you move back 1.67 meters,1
+would you advance 2.9 meters,0
+could you could you rotate right 268.7 degrees,3
+rotate by 46.8°,4
+kindly please go forward 4.23 m,0
+could you rotate left 206.2°,2
+rotate left 12.3°,2
+kindly move back 4.28 meter,1
+could you left turn 74.8 degrees,2
+could you stop now,6
+kindly rotate left 310.3°,2
+rotate left 222.6°,2
+could you spin right 360.0 deg,3
+would you move forward 1.61 meters,0
+could you move back 2.67 meters,1
+spin 30.2 deg,4
+advance 3.48 meters,0
+"kindly proceed to (4.25,0.73)",5
+could you turn right 266.1 degrees,3
+please could you rotate left 51.8 degrees,2
+would you reverse 1.85 m,1
+"could you go to position (-2.31,4.62)",5
+could you could you move backward 4.93 meters,1
+could you turn right 179.6 degrees,3
+could you could you rotate right 80.9 degrees,3
+please please move ahead 3.68 m,0
+right turn 156.0 degrees,3
+could you rotate right 225.7 degrees,3
+rotate left 337.0 degrees,2
+rotate 9.7 degrees,4
+"please navigate to position (0.49,2.28)",5
+would you move forward 4.94 meters,0
+go forward 2.19 m,0
+would you move forward 0.28 meters,0
+right turn 159.6 degrees,3
+could you rotate 273.7 radians,4
+please rotate left 85.6 degrees,2
+kindly please rotate left 324.7 deg,2
+please advance 3.9 m,0
+kindly could you rotate right 336.9 degrees,3
+could you back up 0.14 meters,1
+"would you navigate to position (3.42,-0.04)",5
+kindly advance 2.06 meters,0
+would you go forward 3.98 m,0
+kindly go backward 4.46 meters,1
+please spin left 222.7 deg,2
+could you go forward 2.19 meters,0
+kindly move forward 1.64 m,0
+would you could you rotate left 33.8 degrees,2
+could you rotate left 204.3°,2
+kindly could you go forward 4.09 meters,0
+could you advance 0.46 m,0
+please move back 3.43 meter,1
+please move back 4.68 meter,1
+kindly please go forward 3.22 m,0
+would you move ahead 4.96 meter,0
+would you go forward 4.06 m,0
+would you halt!,6
+move backward 1.37 meters,1
+"kindly navigate to position (3.38,4.84)",5
+please proceed ahead 3.06 meters,0
+could you reverse 4.36 m,1
+please rotate left 176.0°,2
+kindly turn left 51.7 degrees,2
+would you back up 2.74 meters,1
+could you move backward 1.53 meters,1
+could you left turn 99.0 degrees,2
+move backward 2.52 m,1
+"would you move to (1.0,3.31)",5
+please move forward 2.73 m,0
+kindly move ahead 1.78 meters,0
+kindly rotate 140.4 degrees,4
+"would you move to (0.54,3.82)",5
+proceed ahead 4.16 meters,0
+could you go forward 2.49 meters,0
+please could you rotate left 227.0 degrees,2
+"would you go to position (0.17,1.27)",5
+could you pause,6
+would you rotate left 169.0°,2
+please move ahead 3.96 m,0
+spin right 179.8 deg,3
+would you spin right 104.3 deg,3
+could you please move ahead 0.28 m,0
+would you move ahead 1.13 meter,0
+would you move forward 1.92 meters,0
+turn right 41.3 degrees,3
+"would you proceed to (-2.26,-4.9)",5
+please right turn 125.6 degrees,3
+kindly rotate right 7.8°,3
+please reverse 0.46 m,1
+please right turn 41.6 degrees,3
+would you step back 1.57 m,1
+please rotate 298.1 degrees,4
+please step back 2.71 m,1
+back up 1.29 meters,1
+kindly please move ahead 3.98 m,0
+rotate 54.5 degrees,4
+could you turn right 302.9 degrees,3
+please turn left 47.9 degrees,2
+turn left 129.1 degrees,2
+could you advance 0.14 m,0
+please rotate left 73.3 deg,2
+please stop,6
+kindly please rotate right 138.5 deg,3
+"kindly go to position (-3.64,1.64)",5
+"could you navigate to position (-2.56,-4.01)",5
+please reverse 0.58 m,1
+kindly please rotate right 290.0 deg,3
+could you rotate by 30.9°,4
+kindly move back 1.99 meters,1
+kindly please go backward 3.99 m,1
+go forward 0.67 m,0
+could you left turn 163.1 degrees,2
+please please move ahead 2.03 m,0
+would you could you move backward 2.57 meters,1
+kindly rotate right 153.0 degrees,3
+"please move to (0.78,3.71)",5
+would you please go backward 0.53 m,1
+would you rotate 332.4 radians,4
+kindly move back 1.28 meters,1
+"would you go to position (2.5,0.53)",5
+please proceed ahead 1.6 meters,0
+could you move back 2.95 meter,1
+please back up 4.59 meters,1
+kindly back up 0.62 meters,1
+kindly rotate left 266.6 degrees,2
+would you could you move backward 3.3 meters,1
+could you could you rotate left 46.4 degrees,2
+please rotate right 114.1°,3
+would you rotate right 91.8°,3
+would you advance 3.25 meters,0
+go backward 4.21 meters,1
+would you spin right 336.1 deg,3
+kindly spin left 13.2 deg,2
+would you please rotate right 235.4 deg,3
+move backward 2.9 meters,1
+could you go backward 2.91 meters,1
+kindly please rotate left 351.3 deg,2
+would you move back 4.41 meter,1
+please rotate right 75.3°,3
+could you advance 4.46 m,0
+turn right 103.9 degrees,3
+would you move back 0.57 meter,1
+back up 3.26 meters,1
+please step back 1.06 m,1
+please right turn 161.4 degrees,3
+could you go backward 1.82 m,1
+"would you navigate to position (1.9,-3.38)",5
+kindly advance 3.5 m,0
+kindly move back 0.43 meters,1
+kindly could you rotate left 78.4 degrees,2
