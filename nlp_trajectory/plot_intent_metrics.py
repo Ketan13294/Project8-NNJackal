@@ -49,7 +49,8 @@ def main():
         for col in df.columns:
             if col in ("step", "epoch"):
                 continue
-            elif col in ("step", "learning_rate"
+            elif col in ("step", "learning_rate"):
+                continue
             plt.plot(df["step"], df[col], label=col)
 
         plt.xlabel("Training Step")
