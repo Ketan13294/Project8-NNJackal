@@ -1,121 +1,106 @@
 #!/usr/bin/env python3
 
 """
-Improved Jackal NLP Trajectory Generator
+Improved Jackal NLP Trajectory Generator v2
 
-This module converts natural language commands into center of mass (COM) trajectories
-for a Jackal robot using a zero‐shot classification LLM for intent detection.
+This module converts natural language commands into center-of-mass (COM)
+trajectories for a Jackal robot by using a zero‑shot classification LLM
+(fine‑tuned on MNLI) with exactly one canonical intent label per trajectory function.
 """
 
 import re
 import math
-import time
 import numpy as np
 import torch
-from typing import Dict, List, Tuple, Any, Optional
+from typing import Dict, Any, List, Tuple
 from transformers import pipeline
-from pathlib import Path
 
 class JackalTrajectoryGenerator:
     """
-    A class that generates COM trajectories from natural language commands.
+    Generates COM trajectories from natural language commands
+    using a zero‑shot LLM with one intent per function.
     """
 
-    def __init__(self, model_path: str = 'distilbert-base-uncased'):
-        """
-        Initialize the Jackal Trajectory Generator.
+    def __init__(self, model_path: str = "./intent_model"):
+        # Robot motion parameters
+        self.max_linear_speed = 0.5    # m/s
+        self.max_angular_speed = 0.5   # rad/s
+        self.control_freq     = 100    # Hz
+        self.time_step        = 1.0 / self.control_freq
 
-        Args:
-            model_path: Hugging Face model identifier or local path for zero‐shot classification
-        """
-        # Robot parameters
-        self.max_linear_speed = 0.5      # m/s
-        self.max_angular_speed = 0.5     # rad/s
-        self.control_freq = 100          # Hz (for discretization)
-        self.time_step = 1.0 / self.control_freq
+        # Canonical intents (one per trajectory function)
+        self.intents = [
+            "move forward",
+            "move backward",
+            "turn left",
+            "turn right",
+            "rotate",
+            "go to",
+            "stop"
+        ]
 
-        # Load zero‐shot NLP pipeline
-        print(f"Loading zero‐shot classifier from '{model_path}'...")
+        # Load zero‑shot classifier (must be an NLI model)
+        device = 0 if torch.cuda.is_available() else -1
         try:
             self.nlp = pipeline(
-                "zero-shot-classification",
+                task="zero-shot-classification",
                 model=model_path,
-                device=0 if torch.cuda.is_available() else -1,
+                device=device,
             )
-            print("NLP model loaded successfully.")
+            print(f"Loaded zero‑shot model '{model_path}' on device {device}")
         except Exception as e:
-            print(f"Failed to load NLP model ({e}); falling back to substring matching.")
+            print(f"Failed to load zero‑shot model '{model_path}': {e}")
             self.nlp = None
 
-        # Command templates & regex patterns
-        self._setup_command_patterns()
-
-        # Intents list for zero‐shot
-        self.intents = list(self.command_templates.keys()) if self.nlp else None
-
-        # Robot’s current COM
-        self.current_position = np.array([0.0, 0.0, 0.0])
-
-        print("JackalTrajectoryGenerator initialized and ready.")
-
-    def _setup_command_patterns(self):
-        # Set up mapping from textual templates to trajectory functions.
+        # Map each intent to its trajectory builder
         self.command_templates: Dict[str, Any] = {
-            "move forward":     self._generate_forward_trajectory,
-            "go forward":       self._generate_forward_trajectory,
-            "move ahead":       self._generate_forward_trajectory,
-            "move backward":    self._generate_backward_trajectory,
-            "go backward":      self._generate_backward_trajectory,
-            "move back":        self._generate_backward_trajectory,
-            "turn left":        self._generate_left_turn_trajectory,
-            "rotate left":      self._generate_left_turn_trajectory,
-            "turn right":       self._generate_right_turn_trajectory,
-            "rotate right":     self._generate_right_turn_trajectory,
-            "rotate":           self._generate_rotation_trajectory,
-            "go to":            self._generate_goto_trajectory,
-            "stop":             self._generate_stop_trajectory,
+            "move forward":  self._generate_forward_trajectory,
+            "move backward": self._generate_backward_trajectory,
+            "turn left":     self._generate_left_turn_trajectory,
+            "turn right":    self._generate_right_turn_trajectory,
+            "rotate":        self._generate_rotation_trajectory,
+            "go to":         self._generate_goto_trajectory,
+            "stop":          self._generate_stop_trajectory,
         }
 
-        # Regex for extracting numeric parameters
-        self.distance_pattern = r"(\d+\.?\d*)\s*(m|meters|meter|cm|centimeters|centimeter)"
-        self.angle_pattern    = r"(\d+\.?\d*)\s*(degrees|degree|deg|°|rad|radians|radian)"
+        # Parameter‑extraction regex patterns
+        self.distance_pattern = r"(-?\d+\.?\d*)\s*(m|meter|meters|cm|centimeter|centimeters)\b"
+        self.angle_pattern    = r"(-?\d+\.?\d*)\s*(°|deg|degree|degrees|rad|radian|radians)\b"
         self.position_pattern = r"position\s*\(\s*(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)\s*\)"
+
+        # Initial robot COM
+        self.current_position = np.array([0.0, 0.0, 0.0])
 
     def parse_command(self, command_text: str) -> Tuple[Any, Dict[str, Any]]:
         """
-        Classify intent with the LLM (or substring fallback), then extract parameters.
-
-        Returns:
-            trajectory_func: callable
-            params: dict of extracted {distance, angle, position}
+        Classify the intent via zero‑shot (MNLI), then extract numeric parameters.
+        Returns: (trajectory_function, params_dict).
         """
         text = command_text.lower().strip()
 
-        # 1) Intent detection via zero‐shot model
+        # Intent classification
         if self.nlp:
             result = self.nlp(text, candidate_labels=self.intents)
             intent = result["labels"][0]
             score  = result["scores"][0]
-            print(f"Intent: '{intent}' (score {score:.2f})")
-            trajectory_func = self.command_templates[intent]
+            print(f"Intent: '{intent}'  (score={score:.2f})")
+            func = self.command_templates[intent]
         else:
-            # Fallback: first substring match
-            for tmpl, fn in self.command_templates.items():
-                if tmpl in text:
-                    intent, trajectory_func = tmpl, fn
+            # Fallback: substring match on canonical keywords
+            func = self._generate_stop_trajectory
+            for key, fn in self.command_templates.items():
+                if key in text:
+                    func = fn
                     break
-            else:
-                print(f"Unknown command '{text}', defaulting to STOP.")
-                intent, trajectory_func = "stop", self._generate_stop_trajectory
 
-        # 2) Parameter extraction via regex
+        # Parameter extraction
         params: Dict[str, Any] = {}
 
         # Distance in meters
         dm = re.search(self.distance_pattern, text)
         if dm:
             val, unit = float(dm.group(1)), dm.group(2)
-            if unit.startswith('c'):
+            if unit.startswith("c"):
                 val /= 100.0
             params["distance"] = val
 
@@ -123,69 +108,73 @@ class JackalTrajectoryGenerator:
         am = re.search(self.angle_pattern, text)
         if am:
             val, unit = float(am.group(1)), am.group(2)
-            if unit in ['degrees', 'degree', 'deg', '°']:
+            if unit in ("°","deg","degree","degrees"):
                 val = val * math.pi / 180.0
             params["angle"] = val
 
         # Absolute position
         pm = re.search(self.position_pattern, text)
         if pm:
-            params["position"] = (float(pm.group(1)), float(pm.group(2)))
+            x, y = float(pm.group(1)), float(pm.group(2))
+            params["position"] = (x, y)
 
-        return trajectory_func, params
+        return func, params
 
     def generate_trajectory(self, command_text: str) -> List[np.ndarray]:
         """
-        Generate COM trajectory based on parsed intent + params.
+        High‑level entrypoint: parse the command, then run the
+        matched trajectory function with extracted params.
         """
         func, params = self.parse_command(command_text)
         return func(params)
 
     def set_position(self, position: np.ndarray) -> None:
-        """Set the robot’s COM for subsequent trajectory building."""
+        """Set the robot’s current COM."""
         self.current_position = position.copy()
 
     def reset_position(self) -> None:
-        """Reset COM to [0,0,0]."""
+        """Reset the robot’s COM to the origin."""
         self.current_position = np.array([0.0, 0.0, 0.0])
+
+    # Trajectory builders
 
     def _generate_forward_trajectory(self, params: Dict[str, Any]) -> List[np.ndarray]:
         distance = params.get("distance", 1.0)
-        steps = max(int(distance / (self.max_linear_speed * self.time_step)), 1)
-        trajectory, pos = [], self.current_position.copy()
+        steps    = max(int(distance / (self.max_linear_speed * self.time_step)), 1)
+        traj, pos0 = [], self.current_position.copy()
         for i in range(steps + 1):
             frac = i / steps
             delta = frac * distance
-            new_pos = pos.copy()
-            new_pos[0] += delta * math.cos(pos[2])
-            new_pos[1] += delta * math.sin(pos[2])
-            trajectory.append(new_pos)
-        self.current_position = trajectory[-1].copy()
-        return trajectory
+            p = pos0.copy()
+            p[0] += delta * math.cos(pos0[2])
+            p[1] += delta * math.sin(pos0[2])
+            traj.append(p)
+        self.current_position = traj[-1].copy()
+        return traj
 
     def _generate_backward_trajectory(self, params: Dict[str, Any]) -> List[np.ndarray]:
-        bp = params.copy()
-        bp["distance"] = -params.get("distance", 1.0)
-        return self._generate_forward_trajectory(bp)
+        back = params.copy()
+        back["distance"] = -params.get("distance", 1.0)
+        return self._generate_forward_trajectory(back)
 
     def _generate_left_turn_trajectory(self, params: Dict[str, Any]) -> List[np.ndarray]:
-        angle = params.get("angle", math.pi / 2)
+        angle = params.get("angle", math.pi/2)
         steps = max(int(abs(angle) / (self.max_angular_speed * self.time_step)), 1)
-        trajectory = []
-        start_theta = self.current_position[2]
+        traj = []
+        theta0 = self.current_position[2]
         for i in range(steps + 1):
             frac = i / steps
-            theta = start_theta + angle * frac
-            pos = self.current_position.copy()
-            pos[2] = (theta + math.pi) % (2 * math.pi) - math.pi
-            trajectory.append(pos)
-        self.current_position = trajectory[-1].copy()
-        return trajectory
+            theta = theta0 + angle * frac
+            p = self.current_position.copy()
+            p[2] = (theta + math.pi) % (2*math.pi) - math.pi
+            traj.append(p)
+        self.current_position = traj[-1].copy()
+        return traj
 
     def _generate_right_turn_trajectory(self, params: Dict[str, Any]) -> List[np.ndarray]:
-        rp = params.copy()
-        rp["angle"] = -params.get("angle", math.pi / 2)
-        return self._generate_left_turn_trajectory(rp)
+        right = params.copy()
+        right["angle"] = -params.get("angle", math.pi/2)
+        return self._generate_left_turn_trajectory(right)
 
     def _generate_rotation_trajectory(self, params: Dict[str, Any]) -> List[np.ndarray]:
         angle = params.get("angle", 0.0)
@@ -194,44 +183,50 @@ class JackalTrajectoryGenerator:
         else:
             return self._generate_right_turn_trajectory({"angle": abs(angle)})
 
-    def _generate_stop_trajectory(self, params: Dict[str, Any]) -> List[np.ndarray]:
-        print("Generating stop trajectory")
-        return [self.current_position.copy()]
-
     def _generate_goto_trajectory(self, params: Dict[str, Any]) -> List[np.ndarray]:
         if "position" not in params:
             return self._generate_stop_trajectory({})
         tx, ty = params["position"]
-        # rotate then forward
         cx, cy, ct = self.current_position
         dx, dy = tx - cx, ty - cy
         dist = math.hypot(dx, dy)
-        targ_angle = math.atan2(dy, dx)
-        ang_diff = (targ_angle - ct + math.pi) % (2 * math.pi) - math.pi
+        target_ang = math.atan2(dy, dx)
+        diff = (target_ang - ct + math.pi) % (2*math.pi) - math.pi
 
-        traj = self._generate_rotation_trajectory({"angle": ang_diff})
-        forward_traj = self._generate_forward_trajectory({"distance": dist})[1:]
-        traj.extend(forward_traj)
+        traj = self._generate_rotation_trajectory({"angle": diff})
+        fwd = self._generate_forward_trajectory({"distance": dist})[1:]
+        traj.extend(fwd)
         return traj
 
-# Helper to convert numpy arrays to plain lists
-def trajectory_to_list(trajectory: List[np.ndarray]) -> List[List[float]]:
-    return [pt.tolist() for pt in trajectory]
+    def _generate_stop_trajectory(self, params: Dict[str, Any]) -> List[np.ndarray]:
+        print("Generating stop trajectory")
+        return [self.current_position.copy()]
 
-# If run as a script, simple CLI demo
+# Helper to convert numpy arrays to lists
+def trajectory_to_list(traj: List[np.ndarray]) -> List[List[float]]:
+    return [p.tolist() for p in traj]
+
+# Demo if run from CLI
 if __name__ == "__main__":
     import argparse
     from datetime import datetime
 
-    parser = argparse.ArgumentParser(description="Jackal NLP Trajectory Generator")
-    parser.add_argument("--model", default="distilbert-base-uncased",
-                        help="Hugging Face model ID or local path")
+    parser = argparse.ArgumentParser(
+        description="Jackal NLP Trajectory Generator (zero‑shot demo)"
+    )
+    parser.add_argument("--model", default="facebook/bart-large-mnli",
+                        help="HF model ID or local path for zero‑shot")
     args = parser.parse_args()
 
     gen = JackalTrajectoryGenerator(model_path=args.model)
-    examples = ["move forward 1 meter", "turn left 90 degrees", "go to position (1,1)", "stop"]
+    examples = [
+        "move forward 1 meter",
+        "turn left 90 degrees",
+        "go to position (1,1)",
+        "please stop"
+    ]
     for cmd in examples:
-        print(f"\nCommand: '{cmd}'")
+        print(f"\n> Command: {cmd!r}")
         traj = gen.generate_trajectory(cmd)
-        print(f" → Trajectory ({len(traj)} points), start={traj[0]}, end={traj[-1]}")
+        print(f"  → {len(traj)} points, start={traj[0]}, end={traj[-1]}")
 
