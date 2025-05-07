@@ -49,8 +49,7 @@ python train_intent_model.py \
   --val_csv validation.csv \
   --output_dir intent_model \
   --epochs 16 \
-  --batch_size 64 \
-  --
+  --batch_size 64
 ```
 
 ### Plotting Training Metrics
