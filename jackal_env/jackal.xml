@@ -1,7 +1,7 @@
 <mujoco model="jackal_safe_navigation">
 	<compiler angle="radian" meshdir="meshes/" />
 
-    <size njmax="3000" nconmax="1000" />
+    <size njmax="3000" nconmax="1000"/>
     <option gravity="0 0 -9.81"/>
 	<option timestep="0.001" integrator="RK4" iterations="50">
 		<flag warmstart="enable"></flag>

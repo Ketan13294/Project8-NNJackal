@@ -35,9 +35,15 @@ class EpisodeRewardCallback(BaseCallback):
             self.episode_rewards.append(self.episode_reward)
             self.episode_reward = 0.0
 
-            # Plot rewards
             plt.figure(figsize=(10, 5))
-            plt.plot(self.episode_rewards, label='Episode reward')
+            # Calculate moving average
+            window_size = 50
+            if len(self.episode_rewards) >= window_size:
+                moving_avg = np.convolve(self.episode_rewards, np.ones(window_size) / window_size, mode='valid')
+                plt.plot(range(window_size - 1, len(self.episode_rewards)), moving_avg, label='Moving Average Reward', color='darkblue')
+
+            # Plot raw rewards
+            plt.plot(self.episode_rewards, label='Raw Episode Reward', color='lightblue', alpha=0.6)
             plt.xlabel("Episode")
             plt.ylabel("Reward")
             plt.title("TD3 Training Rewards")
@@ -48,66 +54,90 @@ class EpisodeRewardCallback(BaseCallback):
             plt.close()
         return True
 
-if len(sys.argv) != 3:
-    print("Usage: python train.py <param1> <param2>")
+if len(sys.argv) < 5:
+    print("Usage: python train.py <wt> <wc> <wv> <wl> <Lr>")
     sys.exit(1)
 
 wt = sys.argv[1]
 wc = sys.argv[2]
+wv = sys.argv[3]
+wl = sys.argv[4]
+Lr = float(sys.argv[5])
 
-print(f"Parameter 1: {wt}")
-print(f"Parameter 2: {wc}")
+# Generate timestamp for unique checkpoint folders
+timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-env = gym.make(ENV_ID, wt=float(wt), wc=float(wc))
+
+if (len(sys.argv) == 7):
+    additional = str(sys.argv[6])
+    print(additional)
+    folder_name=f"{timestamp}_lr_{int(float(Lr)*10**6)}_wt_{wt}_wc_{wc}_wv_{wv}_wl_{wl}_{additional}"
+else:
+    folder_name=f"{timestamp}_lr_{int(float(Lr)*10**6)}_wt_{wt}_wc_{wc}_wv_{wv}_wl_{wl}"
+
+
+print(f"Wt: {wt}")
+print(f"Wc: {wc}")
+print(f"Wv: {wv}")
+print(f"Wl: {wl}")
+print(f"Lr: {Lr}")
+print(f"Folder_name: {folder_name}")
+load_model_path = "training_data/models/lr_1_wt_2.0_wc_1.0/20250505_011406/best_model"
+tau = 0.002
+env = gym.make(ENV_ID, wt=float(wt), wc=float(wc),wv=float(wv),wl=float(wl))
 
 # Add noise for exploration
 n_actions = env.action_space.shape[0]
 action_noise = NormalActionNoise(mean=np.zeros(n_actions), sigma=0.3 * np.ones(n_actions))
 
-# Generate timestamp for unique checkpoint folders
-timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-
 # TD3 Model with LARGE network
-model = TD3(
-    policy="MlpPolicy",
-    env=env,
-    policy_kwargs=dict(net_arch=dict(
-        pi=[256, 256, 128, 128, 64, 64],
-        qf=[1024, 512, 256, 128]
-    )),
-    action_noise=action_noise,
-    verbose=1,
-    buffer_size=1_000_000,
-    learning_rate=4e-5,
-    batch_size=4096,
-    train_freq=(4, "step"),
-    tau=0.0001,
-    gamma=0.99,
-    policy_delay=2,
-    target_policy_noise=0.2,
-    target_noise_clip=0.5,
-    seed=random.randint(0, 10000),
-    device="cuda:0" if torch.cuda.is_available() else "cpu",
-)
+#model = TD3(
+#    policy="MlpPolicy",
+#    env=env,
+#    policy_kwargs=dict(net_arch=dict(
+#        pi=[256, 256, 128, 128, 64, 64],
+#        qf=[1024, 512, 256, 128]
+#    )),
+#    action_noise=action_noise,
+#    verbose=1,
+#    buffer_size=1_000_000,
+#    learning_rate=Lr,
+#    batch_size=4096,
+#    train_freq=(4, "step"),
+#    tau=0.0001,
+#    gamma=0.99,
+#    policy_delay=2,
+#    target_policy_noise=0.2,
+#    target_noise_clip=0.5,
+#    seed=random.randint(0, 10000),
+#    device="cuda:0" if torch.cuda.is_available() else "cpu",
+#)
+model = TD3.load("training_data/models/lr_100_wt_2.0_wc_0.1_TimeExpLateralWvMediumConditional/20250507_013939/best_model",
+                 env=env,
+                 print_system_info=True,
+                 learning_rate=Lr,
+                 tau=tau)
 
 # ---- Directories ---- #
-checkpoint_path = f'./checkpoints/version_{wt}_{wc}'
+checkpoint_path = f"training_data/checkpoints/{folder_name}"
 os.makedirs(checkpoint_path, exist_ok=True)
 
-model_path = f'./models/version_{wt}_{wc}'
+model_path = f"training_data/models/{folder_name}"
 os.makedirs(model_path, exist_ok=True)
+os.makedirs(model_path+f"/{timestamp}",exist_ok=True)
 
-logs_path = f'./logs/version_{wt}_{wc}'
+logs_path = f"training_data/logs/{folder_name}"
 os.makedirs(logs_path, exist_ok=True)
 
-plot_path = f'./plots/version_{wt}_{wc}'
+plot_path = f"training_data/plots/{timestamp}_{folder_name}"
 os.makedirs(plot_path, exist_ok=True)
 
 checkpoint_callback = CheckpointCallback(
-    save_freq=12_000,  # save every 12,000 steps
-    save_path=checkpoint_path+f'/checkpoints_{timestamp}',
-    name_prefix=f'td3_jackal_{timestamp}'
+    save_freq=6000,  # save every 6000 steps
+    save_path=checkpoint_path,
+    name_prefix=f"td3_jackal_{timestamp}"
 )
+
 
 # ---- Stop Training Callback ---- #
 stop_train_callback = StopTrainingOnNoModelImprovement(max_no_improvement_evals=100, min_evals=100, verbose=1)
@@ -115,8 +145,8 @@ stop_train_callback = StopTrainingOnNoModelImprovement(max_no_improvement_evals=
 # ---- Eval Callback ---- #
 eval_callback = EvalCallback(
     env,
-    best_model_save_path=model_path+f'/best_model_{timestamp}',
-    log_path=logs_path+f'/log_{timestamp}',
+    best_model_save_path=model_path+f"/{timestamp}",
+    log_path=logs_path,
     eval_freq=6000,  # evaluate every 6000 steps
     deterministic=True,
     render=False,
@@ -124,15 +154,15 @@ eval_callback = EvalCallback(
 )
 
 # ---- Training loop with all callbacks ---- #
-reward_callback = EpisodeRewardCallback(env=env, verbose=True, plot_path=plot_path+f'/td3_jackal_trajectory_large__{timestamp}')
+reward_callback = EpisodeRewardCallback(env=env, verbose=True, plot_path=plot_path+f"/{timestamp}_training_plot_{folder_name}")
 
 
 callback = CallbackList([reward_callback, checkpoint_callback, eval_callback])
 
 model.learn(
-    total_timesteps=3_000_000,
+    total_timesteps=2_000_000,
     callback=callback
 )
 
 # Save final model
-model.save(plot_path)
+model.save(model_path+f"/{timestamp}/{timestamp}_final_{folder_name}")
