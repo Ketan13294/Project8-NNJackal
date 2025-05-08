@@ -48,8 +48,76 @@ for trial in range(Nm):
         # env.render()
     if(abs(state[1]-target)< 0.1):
         success += 1
-        path_length += info["cost"]
+        path_length += info["pos_error"]
+print("Forward and backward Commands")
+print(f"Success rate: {(success / Nm) * 100:.2f}%")
+print(f"Average trakcing Error: {path_length / success:.2f} m")
+
+print("Left turn Commands")
+success = 0
+tracking_error = 0
+for trial in range(Nm):
+    print(f"Trial {trial}")
+    done = False
+    reset_position()
+    trajectory = get_trajectory(f"turn left 90 degrees")
+    obs, _ = env.reset(options={"waypoints": trajectory})
+
+    while not done:
+        action = model.predict(obs, deterministic=True)[0]
+        obs, reward, done, _, info = env.step(action)
+        state = env.unwrapped.getStandardState()
+        # env.render()
+    if(abs(state[1]-target)< 0.1):
+        success += 1
+        path_length += info["pos_error"]
 
 print(f"Success rate: {(success / Nm) * 100:.2f}%")
-print(f"Average path length: {path_length / success:.2f} m")
+print(f"Average tracking Error: {path_length / success:.2f} m")
+    
+print("Right turn Commands")
+success = 0
+tracking_error = 0
+for trial in range(Nm):
+    print(f"Trial {trial}")
+    done = False
+    reset_position()
+    trajectory = get_trajectory(f"turn right 90 degrees")
+    obs, _ = env.reset(options={"waypoints": trajectory})
+
+    while not done:
+        action = model.predict(obs, deterministic=True)[0]
+        obs, reward, done, _, info = env.step(action)
+        state = env.unwrapped.getStandardState()
+        # env.render()
+    if(abs(state[1]-target)< 0.1):
+        success += 1
+        path_length += info["pos_error"]
+
+print(f"Success rate: {(success / Nm) * 100:.2f}%")
+print(f"Average tracking Error: {path_length / success:.2f} m")
+    
+
+print("Goto Commands")
+success = 0
+tracking_error = 0
+
+for trial in range(Nm):
+    print(f"Trial {trial}")
+    done = False
+    reset_position()
+    trajectory = get_trajectory(f"turn right 90 degrees")
+    obs, _ = env.reset(options={"waypoints": trajectory})
+
+    while not done:
+        action = model.predict(obs, deterministic=True)[0]
+        obs, reward, done, _, info = env.step(action)
+        state = env.unwrapped.getStandardState()
+        # env.render()
+    if(abs(state[1]-target)< 0.1):
+        success += 1
+        path_length += info["pos_error"]
+
+print(f"Success rate: {(success / Nm) * 100:.2f}%")
+print(f"Average tracking Error: {path_length / success:.2f} m")
     

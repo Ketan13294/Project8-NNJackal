@@ -137,10 +137,12 @@ class JackalEnv(gymnasium.Env):
 
         self.reference_waypoints = np.empty((0,4))
         self.reference_waypoints = deepcopy(np.array(waypoints))
-        timestep_col = np.arange(self.cur_step*self.time_step, 
-                                 self.cur_step*self.time_step+(self.reference_waypoints.shape[0]-1)*self.time_step, 
-                                 self.time_step).reshape(-1, 1)
-        timestep_col = np.append(timestep_col,np.array([timestep_col[-1][0] + self.time_step])).reshape(-1,1)
+        timestep_col = np.empty((len(self.reference_waypoints),1))
+        
+        for i in range(len(self.reference_waypoints)):
+            timestep_col[i][0] = self.cur_step*self.time_step + self.time_step*i
+        # timestep_col = np.append(timestep_col,np.array([timestep_col[-1][0] + self.time_step])).reshape(-1,1)
+        
         self.reference_waypoints = deepcopy(np.hstack((timestep_col, self.reference_waypoints)))
         if self.scene is not None:
             self.scene.ngeom = len(self.reference_waypoints)
