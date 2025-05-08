@@ -90,7 +90,7 @@ def main():
         help="Pretrained HF model"
     )
     parser.add_argument(
-        "--output_dir", type=str, default="./intent_model",
+        "--output_dir", type=str, default="intent_model",
         help="Where to save checkpoints & logs"
     )
     parser.add_argument(

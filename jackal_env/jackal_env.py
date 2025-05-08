@@ -20,7 +20,7 @@ def theta2vec(theta):
 class JackalEnv(gymnasium.Env):
     def __init__(self,wt = 1.0, wc = 1.0,wv = 1.0,wl = 1.0):
         abs_path = os.path.dirname(__file__)
-
+        np.random.seed(42)
         self.model = MjModel.from_xml_path(f'{abs_path}/jackal.xml')
         self.model.opt.timestep = 0.001
         self.data = MjData(self.model)
@@ -77,25 +77,24 @@ class JackalEnv(gymnasium.Env):
         self.cur_step = 0
         self.path_length = 0.0
         self.sim_time = 0.0
-        self.viewer = viewer.launch_passive(self.model, self.data)
-        self.scene = self.viewer.user_scn        
-    
-        self.reference_waypoints.clear()
+        self.reference_waypoints = np.empty((0,4))
 
         if options is not None and 'waypoints' in options:
             self.setTrajectoryWaypoints(options['waypoints'])
         else:
-            self.reference_waypoints = deepcopy(self.generate_random_waypoints(state=self.getStandardState()))
-        
-        self.scene.ngeom = len(self.reference_waypoints)
-        for i in range(len(self.reference_waypoints)-1):
-            mujoco.mjv_initGeom(self.scene.geoms[i],
-                      mujoco.mjtGeom.mjGEOM_CAPSULE, np.zeros(3),
-                      np.zeros(3), np.zeros(9), np.array([1.0,0.0,0.0,1.0]))
-            mujoco.mjv_connector(self.scene.geoms[i],
-                       mujoco.mjtGeom.mjGEOM_CAPSULE, 0.008,
-                       np.array([self.reference_waypoints[i][1],self.reference_waypoints[i][2],0.1]),
-                       np.array([self.reference_waypoints[i+1][1],self.reference_waypoints[i+1][2],0.1]))
+            self.reference_waypoints = deepcopy(np.array(self.generate_random_waypoints(state=self.getStandardState())))
+
+        # Set the initial position of the robot
+        if self.scene is not None:
+            self.scene.ngeom = len(self.reference_waypoints)
+            for i in range(len(self.reference_waypoints)-1):
+                mujoco.mjv_initGeom(self.scene.geoms[i],
+                        mujoco.mjtGeom.mjGEOM_CAPSULE, np.zeros(3),
+                        np.zeros(3), np.zeros(9), np.array([1.0,0.0,0.0,1.0]))
+                mujoco.mjv_connector(self.scene.geoms[i],
+                        mujoco.mjtGeom.mjGEOM_CAPSULE, 0.008,
+                        np.array([self.reference_waypoints[i][1],self.reference_waypoints[i][2],0.1]),
+                        np.array([self.reference_waypoints[i+1][1],self.reference_waypoints[i+1][2],0.1]))
         state = self.getState()
         return (state,{})
 
@@ -107,12 +106,12 @@ class JackalEnv(gymnasium.Env):
         # clear existing markers
         self.viewer.sync()
 
-    def generate_random_waypoints(self,state=np.zeros((7,1)) ,duration=10, dt=0.01, max_lin_vel=1.0, max_ang_vel=0.5):
+    def generate_random_waypoints(self,state=np.zeros((7,1)) ,duration=5.5, dt=0.01, max_lin_vel=1.0, max_ang_vel=0.5):
         n_points = int(duration / dt)+1
         t_query = np.linspace(state[0], state[0]+duration, n_points)
 
         lin_vel = np.clip(np.random.normal(0.0,0.5)*np.ones(n_points),-max_lin_vel,max_lin_vel) #np.clip(np.random.normal(0.0, 0.5, n_points), -max_lin_vel, max_lin_vel)
-        ang_vel = np.clip(np.random.normal(0.0, 0.5, n_points), -max_ang_vel, max_ang_vel) #np.clip(np.random.normal(0.0,0.1)*np.ones(n_points),-max_ang_vel,max_ang_vel) #np.clip(np.random.normal(0.0, 0.5, n_points), -max_ang_vel, max_ang_vel)
+        ang_vel = 0*np.clip(np.random.normal(0.0, 0.2, n_points), -max_ang_vel, max_ang_vel) #np.clip(np.random.normal(0.0,0.1)*np.ones(n_points),-max_ang_vel,max_ang_vel) #np.clip(np.random.normal(0.0, 0.5, n_points), -max_ang_vel, max_ang_vel)
 
         x = [state[1]]
         y = [state[2]]
@@ -136,23 +135,23 @@ class JackalEnv(gymnasium.Env):
             waypoints (list): List of waypoints in the format [t, x, y, theta].
         """
 
-        self.reference_waypoints.clear()
+        self.reference_waypoints = np.empty((0,4))
         self.reference_waypoints = deepcopy(np.array(waypoints))
         timestep_col = np.arange(self.cur_step*self.time_step, 
                                  self.cur_step*self.time_step+(self.reference_waypoints.shape[0]-1)*self.time_step, 
                                  self.time_step).reshape(-1, 1)
         timestep_col = np.append(timestep_col,np.array([timestep_col[-1][0] + self.time_step])).reshape(-1,1)
-        self.reference_waypoints = np.hstack((timestep_col, self.reference_waypoints))
-        
-        self.scene.ngeom = len(self.reference_waypoints)
-        for i in range(len(self.reference_waypoints)-1):
-            mujoco.mjv_initGeom(self.scene.geoms[i],
-                      mujoco.mjtGeom.mjGEOM_CAPSULE, np.zeros(3),
-                      np.zeros(3), np.zeros(9), np.array([1.0,0.0,0.0,1.0]))
-            mujoco.mjv_connector(self.scene.geoms[i],
-                       mujoco.mjtGeom.mjGEOM_CAPSULE, 0.05,
-                       np.array([self.reference_waypoints[i][1],self.reference_waypoints[i][2],0.1]),
-                       np.array([self.reference_waypoints[i+1][1],self.reference_waypoints[i+1][2],0.1]))
+        self.reference_waypoints = deepcopy(np.hstack((timestep_col, self.reference_waypoints)))
+        if self.scene is not None:
+            self.scene.ngeom = len(self.reference_waypoints)
+            for i in range(len(self.reference_waypoints)-1):
+                mujoco.mjv_initGeom(self.scene.geoms[i],
+                        mujoco.mjtGeom.mjGEOM_CAPSULE, np.zeros(3),
+                        np.zeros(3), np.zeros(9), np.array([1.0,0.0,0.0,1.0]))
+                mujoco.mjv_connector(self.scene.geoms[i],
+                        mujoco.mjtGeom.mjGEOM_CAPSULE, 0.05,
+                        np.array([self.reference_waypoints[i][1],self.reference_waypoints[i][2],0.1]),
+                        np.array([self.reference_waypoints[i+1][1],self.reference_waypoints[i+1][2],0.1]))
 
     def getSensor(self):
         sensor_dict = {'accelerometer':None, 'velocimeter':None, 'gyro':None}
@@ -173,8 +172,7 @@ class JackalEnv(gymnasium.Env):
         self.robot_pose = self.data.xpos[self.body_id].copy()
         robot_mat = self.data.xmat[self.body_id].copy().reshape(3, 3)
         theta = Rotation.from_matrix(robot_mat).as_euler('zyx', degrees=False)[0]
-        
-        self.robot_pose[2] = self.normalize_angle(theta)
+        self.robot_pose[2] = theta
 
         pos = self.robot_pose.copy()
         vel = self.robot_vel.copy()
@@ -228,7 +226,7 @@ class JackalEnv(gymnasium.Env):
         for i in  range(len(ref_point)):
             ref_point[i][0] = ref_point[i][0] - state[0]
             ref_point[i][1:3] = (R@(ref_point[i][1:3]) + Rt)
-            ref_point[i][3] = self.normalize_angle(ref_point[i][3]) - self.normalize_angle(state[3])
+            ref_point[i][3] = (ref_point[i][3]) - (state[3])
         
         ref_point = np.array(ref_point).flatten(order='F')
         return ref_point
