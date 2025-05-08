@@ -49,7 +49,8 @@ python train_intent_model.py \
   --val_csv validation.csv \
   --output_dir intent_model \
   --epochs 16 \
-  --batch_size 64
+  --batch_size 64 \
+  --learning_rate 1e-5
 ```
 
 ### Plotting Training Metrics
@@ -57,6 +58,9 @@ python train_intent_model.py \
 ```bash
 python plot_intent_metrics.py
 ```
+
+### After Training, copy all files and folder from this directory to the root of the project
+This is required for the model to load correctly
 
 ### Simple Integration
 
